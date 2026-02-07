@@ -1,96 +1,92 @@
-┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
-┃  WELLBEING APP - QUICK REFERENCE                      ┃
-┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
+WELLBEING APP – QUICKSTART (BACKEND)
 
-🚀 SERVER
-  URL:  http://localhost:3000
-  Root: http://localhost:3000/           (Welcome page with all endpoints)
-  Docs: http://localhost:3000/api-docs   (Interactive API documentation)
-  
-  Start:   npm run dev
-  Stop:    Ctrl+C
-  Build:   npm run build
+This file explains how to quickly start and test the backend locally.
+No prior project knowledge required.
 
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+------------------------------------------------------------
 
-🔐 TEST CREDENTIALS
-  alice@example.com   / Password123!
-  bob@example.com     / Password123!
-  carol@example.com   / Password123!
+SERVER
 
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+URL:        http://localhost:3000
+API Docs:   http://localhost:3000/api-docs
 
-📝 QUICK TEST COMMANDS
+Start server:
+  npm run dev
 
-1️⃣  Health Check
-  curl http://localhost:3000/api/v1/health
+Stop server:
+  Ctrl + C
 
-2️⃣  Login & Get Token
-  TOKEN=$(curl -s -X POST http://localhost:3000/api/v1/auth/login \
-    -H "Content-Type: application/json" \
-    -d '{"email":"alice@example.com","password":"Password123!"}' | \
-    python3 -c "import sys,json; print(json.load(sys.stdin)['data']['accessToken'])")
+------------------------------------------------------------
 
-3️⃣  Get Profile
-  curl http://localhost:3000/api/v1/users/profile \
-    -H "Authorization: Bearer $TOKEN" | python3 -m json.tool
+TEST USERS (READY TO USE)
 
-4️⃣  Create Group
-  curl -X POST http://localhost:3000/api/v1/groups \
-    -H "Authorization: Bearer $TOKEN" \
-    -H "Content-Type: application/json" \
-    -d '{"name":"My Group","description":"Test group","maxMembers":8}'
+Email: alice@example.com
+Password: Password123!
+Role: Facilitator
 
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Email: bob@example.com
+Password: Password123!
+Role: Member
 
-🗄️  DATABASE COMMANDS
+Email: carol@example.com
+Password: Password123!
+Role: Member
 
-  Browse:   npm run prisma:studio
-  Reset:    npm run prisma:migrate reset
-  Seed:     npm run prisma:seed
+------------------------------------------------------------
 
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+QUICK TEST STEPS
 
-📦 KEY ENDPOINTS
+1. Check server status
+   curl http://localhost:3000/api/v1/health
 
-  POST   /api/v1/auth/register       - Register user
-  POST   /api/v1/auth/login          - Login
-  POST   /api/v1/auth/refresh        - Refresh token
-  POST   /api/v1/auth/logout         - Logout
-  
-  GET    /api/v1/users/profile       - Get profile
-  PUT    /api/v1/users/profile       - Update profile
-  GET    /api/v1/users/export-data   - Export data (GDPR)
-  POST   /api/v1/users/data-deletion - Request deletion
-  
-  POST   /api/v1/groups              - Create group
-  GET    /api/v1/groups/:id          - Get group
-  PUT    /api/v1/groups/:id          - Update group
-  DELETE /api/v1/groups/:id          - Delete group
-  
-  POST   /api/v1/groups/:id/posts    - Create post
-  GET    /api/v1/groups/:id/posts    - List posts
-  POST   /api/v1/posts/:id/comments  - Add comment
-  
-  POST   /api/v1/groups/:id/events   - Create event
-  GET    /api/v1/groups/:id/events   - List events
-  POST   /api/v1/events/:id/rsvp     - RSVP to event
+2. Login (get access token)
+   Use alice@example.com to test all features
 
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+3. Open API documentation
+   http://localhost:3000/api-docs
 
-📚 DOCUMENTATION FILES
+   → Try endpoints directly in the browser
 
-  README.md        - Project overview
-  GUIDE.md         - Technical guide
-  TESTING.md       - Testing instructions
-  TEST_RESULTS.md  - Latest test results
+------------------------------------------------------------
 
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+COMMON API ENDPOINTS
 
-✅ STATUS: ALL SYSTEMS OPERATIONAL
+Authentication
+- POST /api/v1/auth/register
+- POST /api/v1/auth/login
+- POST /api/v1/auth/logout
 
-  ✓ Server running
-  ✓ Database connected
-  ✓ Authentication working
-  ✓ All features tested
-  ✓ Ready for development
+User
+- GET  /api/v1/users/profile
+- PUT  /api/v1/users/profile
+- GET  /api/v1/users/export-data
+- POST /api/v1/users/data-deletion
+
+Groups
+- POST /api/v1/groups
+- GET  /api/v1/groups/:id
+- POST /api/v1/groups/:id/posts
+- POST /api/v1/groups/:id/events
+
+------------------------------------------------------------
+
+DATABASE (OPTIONAL)
+
+Open database UI:
+  npm run prisma:studio
+
+Reset database:
+  npm run prisma:migrate reset
+
+Seed test data:
+  npm run prisma:seed
+
+------------------------------------------------------------
+
+STATUS
+
+✓ Backend running
+✓ Database connected
+✓ Authentication working
+✓ GDPR features enabled
+✓ Ready for testing and evaluation
