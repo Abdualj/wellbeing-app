@@ -279,20 +279,6 @@ const API_URL = 'http://localhost:3000/api/v1';
             </p>
           )}
         </div>
-        
-        <div className="card">
-          <h3>✨ Features Showcase</h3>
-          <ul style={{ paddingLeft: 20, color: '#666', lineHeight: 1.8 }}>
-            <li>✅ JWT Authentication</li>
-            <li>✅ User Profiles</li>
-            <li>✅ Small Group Creation (4-12 members)</li>
-            <li>✅ Private Group Posts</li>
-            <li>✅ Event Management</li>
-            <li>✅ GDPR Compliance</li>
-            <li>✅ Notification Preferences</li>
-            <li>✅ Role-Based Access</li>
-          </ul>
-        </div>
       </div>
     </div>
   );
