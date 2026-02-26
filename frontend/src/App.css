@@ -1,6 +1,10 @@
-* {
-  margin: 0;
-  padding: 0;
+@import "tailwindcss";
+
+@theme {
+  --color-sage-900: #4d6845;
+}
+
+/*adding: 0;
   box-sizing: border-box;
 }
 
@@ -93,6 +97,7 @@ body {
   cursor: not-allowed;
   transform: none;
 }
+  */
 
 .test-users {
   margin-top: 20px;

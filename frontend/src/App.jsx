@@ -1,29 +1,29 @@
 import { useState, useEffect } from 'react';
-import './App.css';
+
+
+
 
 const API_URL = 'http://localhost:3000/api/v1';
 
-function App() {
-  const [user, setUser] = useState(null);
+ function App() {
+
   const [token, setToken] = useState(localStorage.getItem('token'));
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
   const [groups, setGroups] = useState([]);
   const [posts, setPosts] = useState([]);
   const [newGroupName, setNewGroupName] = useState('');
   const [newGroupDesc, setNewGroupDesc] = useState('');
   const [selectedGroup, setSelectedGroup] = useState(null);
   const [newPost, setNewPost] = useState('');
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (token) {
       fetchProfile();
     }
   }, [token]);
+  
 
-  const fetchProfile = async () => {
+   const fetchProfile = async () => {
     try {
       const res = await fetch(`${API_URL}/users/profile`, {
         headers: { Authorization: `Bearer ${token}` }
@@ -38,49 +38,6 @@ function App() {
     } catch (err) {
       console.error(err);
     }
-  };
-
-  const handleLogin = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    setError('');
-    
-    try {
-      const res = await fetch(`${API_URL}/auth/login`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password })
-      });
-      
-      const data = await res.json();
-      
-      if (res.ok) {
-        const accessToken = data.data.accessToken;
-        setToken(accessToken);
-        localStorage.setItem('token', accessToken);
-        setUser(data.data.user);
-      } else {
-        setError(data.message || 'Login failed');
-      }
-    } catch (err) {
-      setError('Network error. Is the backend running?');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const quickLogin = (testEmail) => {
-    setEmail(testEmail);
-    setPassword('Password123!');
-  };
-
-  const handleLogout = () => {
-    localStorage.removeItem('token');
-    setToken(null);
-    setUser(null);
-    setGroups([]);
-    setPosts([]);
-    setSelectedGroup(null);
   };
 
   const createGroup = async (e) => {
@@ -159,6 +116,15 @@ function App() {
     }
   };
 
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    setToken(null);
+    setUser(null);
+    setGroups([]);
+    setPosts([]);
+    setSelectedGroup(null);
+  };
+
   if (!token) {
     return (
       <div className="app">
@@ -166,7 +132,7 @@ function App() {
           <h1>Wellbeing Community</h1>
           <p>Connect with small groups for mental wellness</p>
         </div>
-        
+    /*   
         <div className="login-card">
           <h2>Login</h2>
           {error && <div className="error">{error}</div>}
@@ -223,9 +189,8 @@ function App() {
       
       <div className="dashboard">
         <div className="card user-info">
-          <h2>Welcome, {user?.firstName}!</h2>
-          <p>{user?.email}</p>
-          <p>Notification Preference: {user?.notificationPreference}</p>
+          <h2>Welcome</h2>
+          <p>Notification Preference: </p>
           <button onClick={handleLogout} className="logout-btn">
             Logout
           </button>
