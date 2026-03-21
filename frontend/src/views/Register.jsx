@@ -1,15 +1,18 @@
 import { useState } from 'react'
 
 const Register = () => {
-  const [username, setUsername] = useState('')
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
   const [loading, setLoading] = useState(false)
+  const [dataProcessingConsent, setDataProcessingConsent] = useState(false);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target
-      if (name === 'username') setUsername(value)
+      if (name === 'firstname') setFirstName(value)
+      if (name === 'lastname') setLastName(value)
       if (name === 'email') setEmail(value)
       if (name === 'password') setPassword(value)
       if (name === 'confirmPassword') setConfirmPassword(value)
@@ -23,13 +26,18 @@ const Register = () => {
     return;
   }
 
+     if (!dataProcessingConsent) {
+     alert('You must consent to data processing');
+     return;
+   }
+
   setLoading(true);
 
-  try {
+  try {                            
     const res = await fetch('http://localhost:3000/api/v1/auth/register', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ username, email, password })
+      body: JSON.stringify({ firstName, lastName, email, password, consentGiven: dataProcessingConsent, dataProcessingConsent, marketingConsent: false})
     });
 
     const data = await res.json();
@@ -50,8 +58,6 @@ const Register = () => {
 
 
   return (
-
-    <>
       <section className="flex items-center justify-center min-h-screen bg-gray-200">
         <div className="main bg-white px-16 py-20 rounded-3xl text-center w-full max-w-md shadow-xl border-gray-100">
           <div className="border-b-2 border-gray-300 mb-6 pb-4">
@@ -60,12 +66,24 @@ const Register = () => {
           </div>
           <form onSubmit={handleSubmit} className="text-lg">
             <div>
-              <label htmlFor="registerusername" className="block mt-4 mb-2 text-left text-sage-900 font-medium">Username</label>
+              <label htmlFor="registerusername" className="block mt-4 mb-2 text-left text-sage-900 font-medium">First Name </label>
               <input
-                name="username"
+                name="firstname"
                 type="text"
+                value={firstName}
                 id="registerusername"
-                placeholder="Enter your username"
+                placeholder="Enter your First name"
+                onChange={handleInputChange}
+                className="block w-full mb-6 px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:border-green-400 bg-gray-50" required/>
+            </div>
+            <div>
+              <label htmlFor="registerusername" className="block mt-4 mb-2 text-left text-sage-900 font-medium">Last Name </label>
+              <input
+                name="lastname"
+                type="text"
+                value={lastName}
+                id="registerusername"
+                placeholder="Enter your Last name"
                 onChange={handleInputChange}
                 className="block w-full mb-6 px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:border-green-400 bg-gray-50" required/>
             </div>
@@ -74,6 +92,7 @@ const Register = () => {
               <input
                 name="email"
                 type="email"
+                value={email}
                 id="registeremail"
                 placeholder="Enter your email"
                 onChange={handleInputChange}
@@ -84,6 +103,7 @@ const Register = () => {
               <input
                 name="password"
                 type="password"
+                value={password}
                 id="registerpassword"
                 placeholder="Enter your password"
                 onChange={handleInputChange}
@@ -94,19 +114,21 @@ const Register = () => {
               <input
                 name="confirmPassword"
                 type="password"
+                value={confirmPassword}
                 id="registerconfirmpassword"
                 placeholder="Confirm your password"
                 onChange={handleInputChange}
                 className="block w-full mb-6 px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:border-green-400 bg-gray-50" required/>
             </div>
             <button type="submit" disabled={loading} className="font-medium text-base text-white bg-sage-900 hover:bg-green-900 px-6 py-2 rounded-md w-full mt-2">Register</button>
+          <input
+          type="checkbox" checked={dataProcessingConsent} onChange={(e) => setDataProcessingConsent(e.target.checked)}/> I agree to data processing
           </form>
           <p className="mt-6">Already a member?
             <a href="./login" className="text-blue-500 hover:underline"> Login Here</a>
           </p>
         </div>
       </section>
-    </>
   );
 };
 
