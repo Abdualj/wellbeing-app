@@ -107,4 +107,6 @@ router.get(
  */
 router.get('/groups', userController.getUserGroups);
 
+router.get('/stats', userController.getUserStats);
+
 export default router;

@@ -7,13 +7,15 @@ export default {
   'border-sage-300',
   'border-sage-700',
   'bg-sage-50',
+  'border-sage-200',
+  'border-sage-200/50',
   'bg-sage-100',
 ],
   theme: {
     extend: {
       colors: {
         sage: {
-          50: '#f2f5f0',
+          50: '#f7f9f6',
           100: '#e0e8da',
           200: '#c8d1c4',
           300: '#8ca989',

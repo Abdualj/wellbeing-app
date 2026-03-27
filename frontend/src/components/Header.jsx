@@ -1,16 +1,54 @@
-import Login from '../views/Login'
-import Register from '../views/Register'
-import Profile from '../views/Profile'
-
+import { Users, CircleUserRound, Heart, LogOut, BellOff } from "lucide-react";
 
 const Header = () => {
-    return (
-        <nav>
-            <li><a href="/profile">Profile</a></li>
-            <li><a href="/Login">Login</a></li>
-            <li><a href="/Register">Register</a></li>
-        </nav>
-    )
-}
+  const isLoggedIn = !!localStorage.getItem("token");
+
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    window.location.href = "/login";
+  };
+
+  return (
+    <nav className="bg-white/60 backdrop-blur-sm border-b border-sage-200/50">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex justify-between items-center py-4">
+          <div>
+            <h1 className="text-lg font-semibold text-gray-900">Wellspring</h1>
+            <p className="text-xs text-gray-600">
+              Move together, grow together
+            </p>
+          </div>
+
+          <div className="flex items-center gap-4 whitespace-nowrap">
+            <a href="/community" className="flex items-center gap-2 px-5 py-2 rounded-lg text-sm font-medium text-gray-900 transition hover:bg-sage-900 hover:text-white"><Heart size={18} /> Community </a>
+            <a  href="/groups" className="flex items-center gap-2 px-5 py-2 rounded-lg text-sm font-medium text-gray-900 transition hover:bg-sage-900 hover:text-white"><Users size={18} /> Groups</a>
+
+            {isLoggedIn && (
+              <>
+                <a href="/profile"className="flex items-center gap-2 px-5 py-2 rounded-lg text-sm font-medium text-gray-900 transition hover:bg-sage-900 hover:text-white"><CircleUserRound size={18} /> Profile</a>
+                <div className="h-5 w-px bg-gray-300 mx-2" />
+                <button className="text-gray-600 hover:text-sage-900">
+                  <BellOff size={20} />
+                </button>
+                <button
+                  onClick={handleLogout}
+                  className="text-gray-600 hover:text-sage-900">
+                  <LogOut size={20} />
+                </button>
+              </>
+            )}
+
+            {!isLoggedIn && (
+              <>
+                <a href="/login"className="text-sm font-medium text-gray-900 hover:text-gray-600">Login</a>
+                <a href="/register"className="px-4 py-2 bg-sage-900 text-white rounded-lg text-sm font-medium hover:bg-sage-900">Register</a>
+              </>
+            )}
+          </div>
+        </div>
+      </div>
+    </nav>
+  );
+};
 
 export default Header;

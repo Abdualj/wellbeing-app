@@ -5,7 +5,7 @@ import RecentActivity from '../components/Profile/RecentActivity';
 const Profile = () => {
     return (
         <>
-            <div className="min-h-screen bg-gray-100 flex flex-col items-center justify-center py-10">
+            <div className="min-h-screen bg-sage-50 backdrop-blur-sm flex flex-col items-center justify-center py-10">
                 <div className="w-[640px] flex flex-col gap-4">
                     <ProfileCard />
                     <h2 className="text-lg font-semibold text-gray-700">My Groups</h2>

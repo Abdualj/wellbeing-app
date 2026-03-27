@@ -17,6 +17,18 @@ export const getProfile = asyncHandler(
   }
 );
 
+export const getUserStats = asyncHandler(
+  async (req: AuthRequest, res: Response, next: NextFunction) => {
+    const userId = req.user!.id;
+    const stats = await userService.getUserStats(userId);
+
+    res.status(200).json({
+      status: 'success',
+      data: stats,
+    });
+  }
+);
+
 export const updateProfile = asyncHandler(
   async (req: AuthRequest, res: Response, next: NextFunction) => {
     const userId = req.user!.id;

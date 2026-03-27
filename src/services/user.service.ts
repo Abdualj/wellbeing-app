@@ -60,6 +60,25 @@ export class UserService {
     return user;
   }
 
+  async getUserStats(userId: string) {
+    const postsCount = await prisma.post.count({ 
+      where: { authorId: userId }
+    });
+
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
+      select: { createdAt: true }
+    });
+
+    const days = Math.floor((Date.now() - (user?.createdAt?.getTime() || 0)) / (1000 * 60 * 60 * 24));
+
+    return {
+      totalLikes: 0,
+      activities: postsCount,
+      daysActive: days
+    };
+  }
+
   async updateConsent(
     userId: string,
     consent: {

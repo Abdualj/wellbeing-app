@@ -44,7 +44,7 @@ const ProfileCard = () => {
 
 console.log(user);
     return (
-        <div className="w-full bg-white rounded shadow">
+        <div className="w-full bg-white rounded-2xl shadow-sm border border-gray-100">
             <div className="flex items-start gap-4 p-6">
                 <div className="relative w-20 h-20">
                     <img 
@@ -108,4 +108,3 @@ console.log(user);
 };
 
 export default ProfileCard;
-

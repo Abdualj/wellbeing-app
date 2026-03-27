@@ -72,13 +72,12 @@ const EditModal = ({ isOpen, setEdit, refetch }) => {
             onChange={handleNameChange}
             className="border border-gray-300 p-2 rounded w-full focus:outline-none focus:border-gray-400"
           />
-          <input
-            type="text"
+          <textarea
             placeholder="About"
             value={about}
             onChange={handleAboutChange}
-            className="border border-gray-300 p-2 rounded w-full focus:outline-none focus:border-gray-400"
-          />
+            className="border border-gray-300 p-3 rounded w-full h-24 resize-none focus:outline-none focus:border-gray-400 text-gray-700 placeholder-gray-400"
+          ></textarea>
         </div>
         <div className="flex justify-end gap-2 mt-6">
           <button

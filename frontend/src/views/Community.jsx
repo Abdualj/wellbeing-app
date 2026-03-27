@@ -2,7 +2,10 @@ import Header from '../views/Community'
 
 const Community = () => {
     return (
-        <h1>Hi</h1>
+        <div className="bg-sage-50 backdrop-blur-sm min-h-screen"> 
+            <h1>Hi</h1>
+        </div>
+        
     )
 }
 
