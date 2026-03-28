@@ -11,6 +11,13 @@ interface CreateGroupData {
   requireApproval?: boolean;
 }
 
+interface GetGroupsFilter {
+  search?: string;
+  category?: string;
+  activity?: string;
+  myGroups?: boolean;
+}
+
 export class GroupService {
   async createGroup(userId: string, data: CreateGroupData) {
     const group = await prisma.group.create({
@@ -36,6 +43,152 @@ export class GroupService {
     });
 
     return group;
+  }
+
+  async getAllGroups(userId: string, filter: GetGroupsFilter) {
+    const { search, myGroups } = filter;
+
+    // Build where clause
+    const where: any = {
+      isActive: true,
+    };
+
+    // Filter by search query
+    if (search) {
+      where.OR = [
+        { name: { contains: search, mode: 'insensitive' } },
+        { description: { contains: search, mode: 'insensitive' } },
+        { purpose: { contains: search, mode: 'insensitive' } },
+      ];
+    }
+
+    // Filter by user's groups only
+    if (myGroups) {
+      where.memberships = {
+        some: {
+          userId,
+          status: MembershipStatus.ACTIVE,
+        },
+      };
+    }
+
+    const groups = await prisma.group.findMany({
+      where,
+      include: {
+        _count: {
+          select: {
+            memberships: {
+              where: { status: MembershipStatus.ACTIVE },
+            },
+          },
+        },
+        memberships: {
+          where: {
+            userId,
+            status: MembershipStatus.ACTIVE,
+          },
+          select: {
+            role: true,
+            status: true,
+          },
+        },
+      },
+      orderBy: {
+        createdAt: 'desc',
+      },
+    });
+
+    return groups.map(group => ({
+      id: group.id,
+      name: group.name,
+      description: group.description,
+      purpose: group.purpose,
+      activity: group.purpose, // Map purpose to activity for frontend compatibility
+      category: 'General', // You can add category field to schema later
+      image: null, // Add image field to schema if needed
+      memberCount: group._count.memberships,
+      capacity: group.maxMembers,
+      members: group.memberships,
+      createdAt: group.createdAt,
+      status: group.isActive ? 'active' : 'inactive',
+      isPrivate: group.isPrivate,
+      requireApproval: group.requireApproval,
+    }));
+  }
+
+  async joinGroup(groupId: string, userId: string) {
+    // Check if group exists
+    const group = await prisma.group.findUnique({
+      where: { id: groupId },
+      include: {
+        _count: {
+          select: {
+            memberships: {
+              where: { status: MembershipStatus.ACTIVE },
+            },
+          },
+        },
+      },
+    });
+
+    if (!group || !group.isActive) {
+      throw new AppError('Group not found', 404);
+    }
+
+    // Check capacity
+    if (group._count.memberships >= group.maxMembers) {
+      throw new AppError('Group is at maximum capacity', 400);
+    }
+
+    // Check if already a member
+    const existingMembership = await prisma.membership.findUnique({
+      where: {
+        userId_groupId: {
+          userId,
+          groupId,
+        },
+      },
+    });
+
+    if (existingMembership && existingMembership.status === MembershipStatus.ACTIVE) {
+      throw new AppError('You are already a member of this group', 409);
+    }
+
+    // Determine status based on group settings
+    const status = group.requireApproval 
+      ? MembershipStatus.PENDING 
+      : MembershipStatus.ACTIVE;
+
+    // Create or update membership
+    const membership = existingMembership
+      ? await prisma.membership.update({
+          where: {
+            userId_groupId: {
+              userId,
+              groupId,
+            },
+          },
+          data: {
+            status,
+            ...(status === MembershipStatus.ACTIVE && { joinedAt: new Date() }),
+          },
+        })
+      : await prisma.membership.create({
+          data: {
+            userId,
+            groupId,
+            status,
+            role: MemberRole.MEMBER,
+            ...(status === MembershipStatus.ACTIVE && { joinedAt: new Date() }),
+          },
+        });
+
+    return {
+      ...membership,
+      message: status === MembershipStatus.PENDING 
+        ? 'Join request sent. Waiting for approval.' 
+        : 'Successfully joined the group!',
+    };
   }
 
   async getGroup(groupId: string, userId: string) {

@@ -5,6 +5,7 @@ import Login from './views/Login'
 import Register from './views/Register'
 import Profile from './views/Profile'
 import Community from './views/Community'
+import Groups from './views/Groups'
 import Header from './components/Header'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 
@@ -17,6 +18,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
           <Route path="/login" element={<Login />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/register" element={<Register />} />
+          <Route path="/groups" element={<Groups />} />
         </Routes>
       </BrowserRouter>
   </React.StrictMode>,
