@@ -1,16 +1,15 @@
 import { Router } from 'express';
 import { body, param } from 'express-validator';
 import { validate } from '../middleware/validator';
-// import { authenticate } from '../middleware/auth'; // TODO: Uncomment when auth is ready
-// import { isGroupMember, isGroupFacilitator } from '../middleware/authorization'; // TODO: Uncomment when auth is ready
+import { authenticate } from '../middleware/auth';
+// import { isGroupMember, isGroupFacilitator } from '../middleware/authorization';
 import * as groupController from '../controllers/group.controller';
 import { auditLog } from '../middleware/auditLog';
 
 const router = Router();
 
 // All routes require authentication
-// TODO: Uncomment when authentication is implemented
-// router.use(authenticate);
+router.use(authenticate);
 
 /**
  * @swagger

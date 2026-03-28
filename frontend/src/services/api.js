@@ -12,10 +12,17 @@ const getAuthHeaders = () => {
 
 // Helper function to handle API responses
 const handleResponse = async (response) => {
-  const data = await response.json();
+  let data;
+  try {
+    data = await response.json();
+  } catch (err) {
+    // If response is not JSON, try to get text
+    const text = await response.text();
+    throw new Error(text || 'An error occurred');
+  }
   
   if (!response.ok) {
-    throw new Error(data.message || 'An error occurred');
+    throw new Error(data.message || data.error || 'An error occurred');
   }
   
   return data;
@@ -223,8 +230,8 @@ export const authAPI = {
 
 // Users API
 export const usersAPI = {
-  getProfile: async (userId) => {
-    const response = await fetch(`${API_BASE_URL}/users/${userId}`, {
+  getProfile: async () => {
+    const response = await fetch(`${API_BASE_URL}/users/profile`, {
       method: 'GET',
       headers: getAuthHeaders(),
     });
@@ -232,11 +239,29 @@ export const usersAPI = {
     return handleResponse(response);
   },
 
-  updateProfile: async (userId, userData) => {
-    const response = await fetch(`${API_BASE_URL}/users/${userId}`, {
+  updateProfile: async (userData) => {
+    const response = await fetch(`${API_BASE_URL}/users/profile`, {
       method: 'PUT',
       headers: getAuthHeaders(),
       body: JSON.stringify(userData),
+    });
+    
+    return handleResponse(response);
+  },
+
+  getUserGroups: async () => {
+    const response = await fetch(`${API_BASE_URL}/users/groups`, {
+      method: 'GET',
+      headers: getAuthHeaders(),
+    });
+    
+    return handleResponse(response);
+  },
+
+  getUserStats: async () => {
+    const response = await fetch(`${API_BASE_URL}/users/stats`, {
+      method: 'GET',
+      headers: getAuthHeaders(),
     });
     
     return handleResponse(response);

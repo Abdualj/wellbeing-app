@@ -12,12 +12,19 @@ const Header = () => {
     <nav className="bg-white/60 backdrop-blur-sm border-b border-sage-200/50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center py-4">
-          <div>
-            <h1 className="text-lg font-semibold text-gray-900">Wellspring</h1>
-            <p className="text-xs text-gray-600">
-              Move together, grow together
-            </p>
-          </div>
+          <a href="/" className="flex items-center gap-3">
+            <img 
+              src="/logo/wellspring-logo.png" 
+              alt="Wellspring Logo" 
+              className="h-16 w-auto"
+            />
+            <div>
+              <h1 className="text-lg font-semibold text-gray-900">Wellspring</h1>
+              <p className="text-xs text-gray-600">
+                Move together, grow together
+              </p>
+            </div>
+          </a>
 
           <div className="flex items-center gap-4 whitespace-nowrap">
             <a href="/community" className="flex items-center gap-2 px-5 py-2 rounded-lg text-sm font-medium text-gray-900 transition hover:bg-sage-900 hover:text-white"><Heart size={18} /> Community </a>

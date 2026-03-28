@@ -7,8 +7,12 @@ import EmptyState from '../components/Groups/EmptyState';
 import LoadingSkeleton from '../components/Groups/LoadingSkeleton';
 import CreateGroupModal from '../components/Groups/CreateGroupModal';
 import { groupsAPI } from '../services/api';
+import { useApp } from '../context/AppContext';
 
 const Groups = () => {
+  // Context
+  const { triggerProfileRefresh } = useApp();
+  
   // State Management
   const [groups, setGroups] = useState([]);
   const [selectedFilter, setSelectedFilter] = useState('all');
@@ -181,6 +185,9 @@ const Groups = () => {
 
       const groupName = groups.find(g => g.id === groupId)?.name;
       alert(`You've joined ${groupName}!`);
+      
+      // Trigger profile refresh to update "My Groups" section
+      triggerProfileRefresh();
     } catch (err) {
       console.error('Error joining group:', err);
       alert(err.message || 'Failed to join group. Please try again.');
@@ -194,14 +201,20 @@ const Groups = () => {
     try {
       const response = await groupsAPI.create(groupData);
       
-      setGroups(prevGroups => [response.data, ...prevGroups]);
+      // Add the new group to the list
+      if (response && response.data) {
+        setGroups(prevGroups => [response.data, ...prevGroups]);
+        alert(`Group "${groupData.name}" created successfully!`);
+      }
       
-      alert(`Group "${groupData.name}" created successfully!`);
+      // Trigger profile refresh to update "My Groups" section
+      triggerProfileRefresh();
       
       setShowCreateModal(false);
     } catch (err) {
       console.error('Error creating group:', err);
-      throw err;
+      // Re-throw to show in the modal
+      throw new Error(err.message || 'Failed to create group. Please try again.');
     }
   };
 

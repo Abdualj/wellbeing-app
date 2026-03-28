@@ -19,7 +19,7 @@ model User {
   lastName          String
   displayName       String?
   bio               String?
-  avatar            String?
+  avatar            String?   @db.Text
   
   // Privacy & GDPR
   consentGiven      Boolean   @default(false)
@@ -65,7 +65,7 @@ model Group {
   name              String
   description       String?
   purpose           String?
-  avatar            String?
+  avatar            String?   @db.Text
   
   // Group settings
   maxMembers        Int       @default(12)

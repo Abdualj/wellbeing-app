@@ -26,7 +26,7 @@ export class GroupService {
         memberships: {
           create: {
             userId,
-            role: MemberRole.FACILITATOR,
+            role: MemberRole.ADMIN, // Creator gets ADMIN role
             status: MembershipStatus.ACTIVE,
           },
         },
@@ -39,10 +39,32 @@ export class GroupService {
             status: true,
           },
         },
+        _count: {
+          select: {
+            memberships: {
+              where: { status: MembershipStatus.ACTIVE },
+            },
+          },
+        },
       },
     });
 
-    return group;
+    return {
+      id: group.id,
+      name: group.name,
+      description: group.description,
+      purpose: group.purpose,
+      activity: group.purpose,
+      avatar: group.avatar,
+      image: group.avatar, // Map avatar to image for frontend compatibility
+      memberCount: group._count.memberships,
+      capacity: group.maxMembers,
+      members: group.memberships,
+      createdAt: group.createdAt,
+      status: group.isActive ? 'active' : 'inactive',
+      isPrivate: group.isPrivate,
+      requireApproval: group.requireApproval,
+    };
   }
 
   async getAllGroups(userId: string, filter: GetGroupsFilter) {
@@ -105,7 +127,8 @@ export class GroupService {
       purpose: group.purpose,
       activity: group.purpose, // Map purpose to activity for frontend compatibility
       category: 'General', // You can add category field to schema later
-      image: null, // Add image field to schema if needed
+      avatar: group.avatar,
+      image: group.avatar, // Map avatar to image for frontend compatibility
       memberCount: group._count.memberships,
       capacity: group.maxMembers,
       members: group.memberships,

@@ -8,7 +8,7 @@ const groupService = new GroupService();
 export const getAllGroups = asyncHandler(
   async (req: AuthRequest, res: Response, next: NextFunction) => {
     // TODO: Use real userId when authentication is implemented
-    const userId = req.user?.id || 'dev-user-id';
+    const userId = req.user!.id;
     const { search, category, activity, myGroups } = req.query;
     
     const groups = await groupService.getAllGroups(userId, {
@@ -28,8 +28,20 @@ export const getAllGroups = asyncHandler(
 export const createGroup = asyncHandler(
   async (req: AuthRequest, res: Response, next: NextFunction) => {
     // TODO: Use real userId when authentication is implemented
-    const userId = req.user?.id || 'dev-user-id';
-    const group = await groupService.createGroup(userId, req.body);
+    const userId = req.user!.id;
+    
+    // Map frontend fields to backend schema
+    const groupData = {
+      name: req.body.name,
+      description: req.body.description,
+      purpose: req.body.activity || req.body.purpose, // Map activity to purpose
+      avatar: req.body.imageUrl || req.body.avatar, // Map imageUrl to avatar
+      maxMembers: req.body.capacity || req.body.maxMembers || 12, // Map capacity to maxMembers
+      isPrivate: req.body.privacy === 'private', // Map privacy to isPrivate
+      requireApproval: req.body.requireApproval !== false, // Default to true
+    };
+    
+    const group = await groupService.createGroup(userId, groupData);
 
     res.status(201).json({
       status: 'success',
@@ -41,7 +53,7 @@ export const createGroup = asyncHandler(
 export const getGroup = asyncHandler(
   async (req: AuthRequest, res: Response, next: NextFunction) => {
     // TODO: Use real userId when authentication is implemented
-    const userId = req.user?.id || 'dev-user-id';
+    const userId = req.user!.id;
     const { groupId } = req.params;
     const group = await groupService.getGroup(groupId, userId);
 
@@ -55,7 +67,7 @@ export const getGroup = asyncHandler(
 export const joinGroup = asyncHandler(
   async (req: AuthRequest, res: Response, next: NextFunction) => {
     // TODO: Use real userId when authentication is implemented
-    const userId = req.user?.id || 'dev-user-id';
+    const userId = req.user!.id;
     const { groupId } = req.params;
     const result = await groupService.joinGroup(groupId, userId);
 
@@ -69,7 +81,7 @@ export const joinGroup = asyncHandler(
 export const updateGroup = asyncHandler(
   async (req: AuthRequest, res: Response, next: NextFunction) => {
     // TODO: Use real userId when authentication is implemented
-    const userId = req.user?.id || 'dev-user-id';
+    const userId = req.user!.id;
     const { groupId } = req.params;
     const group = await groupService.updateGroup(groupId, userId, req.body);
 
@@ -83,7 +95,7 @@ export const updateGroup = asyncHandler(
 export const deleteGroup = asyncHandler(
   async (req: AuthRequest, res: Response, next: NextFunction) => {
     // TODO: Use real userId when authentication is implemented
-    const userId = req.user?.id || 'dev-user-id';
+    const userId = req.user!.id;
     const { groupId } = req.params;
     const result = await groupService.deleteGroup(groupId, userId);
 
@@ -97,7 +109,7 @@ export const deleteGroup = asyncHandler(
 export const getGroupMembers = asyncHandler(
   async (req: AuthRequest, res: Response, next: NextFunction) => {
     // TODO: Use real userId when authentication is implemented
-    const userId = req.user?.id || 'dev-user-id';
+    const userId = req.user!.id;
     const { groupId } = req.params;
     const members = await groupService.getGroupMembers(groupId, userId);
 
@@ -111,7 +123,7 @@ export const getGroupMembers = asyncHandler(
 export const inviteMember = asyncHandler(
   async (req: AuthRequest, res: Response, next: NextFunction) => {
     // TODO: Use real userId when authentication is implemented
-    const userId = req.user?.id || 'dev-user-id';
+    const userId = req.user!.id;
     const { groupId } = req.params;
     const { email } = req.body;
     const membership = await groupService.inviteMember(groupId, userId, email);
@@ -126,7 +138,7 @@ export const inviteMember = asyncHandler(
 export const acceptInvitation = asyncHandler(
   async (req: AuthRequest, res: Response, next: NextFunction) => {
     // TODO: Use real userId when authentication is implemented
-    const userId = req.user?.id || 'dev-user-id';
+    const userId = req.user!.id;
     const { groupId } = req.params;
     const membership = await groupService.acceptInvitation(groupId, userId);
 
@@ -140,7 +152,7 @@ export const acceptInvitation = asyncHandler(
 export const leaveGroup = asyncHandler(
   async (req: AuthRequest, res: Response, next: NextFunction) => {
     // TODO: Use real userId when authentication is implemented
-    const userId = req.user?.id || 'dev-user-id';
+    const userId = req.user!.id;
     const { groupId } = req.params;
     const result = await groupService.leaveGroup(groupId, userId);
 
@@ -154,7 +166,7 @@ export const leaveGroup = asyncHandler(
 export const removeMember = asyncHandler(
   async (req: AuthRequest, res: Response, next: NextFunction) => {
     // TODO: Use real userId when authentication is implemented
-    const userId = req.user?.id || 'dev-user-id';
+    const userId = req.user!.id;
     const { groupId, memberId } = req.params;
     const result = await groupService.removeMember(groupId, userId, memberId);
 

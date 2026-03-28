@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { X, Users, MapPin, Calendar } from 'lucide-react';
+import { X, Users, MapPin, Calendar, Upload, Image } from 'lucide-react';
 
 const CreateGroupModal = ({ isOpen, onClose, onCreateGroup }) => {
   const [formData, setFormData] = useState({
@@ -13,6 +13,7 @@ const CreateGroupModal = ({ isOpen, onClose, onCreateGroup }) => {
     imageUrl: '',
     privacy: 'public',
   });
+  const [imagePreview, setImagePreview] = useState(null);
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState(null);
@@ -55,13 +56,83 @@ const CreateGroupModal = ({ isOpen, onClose, onCreateGroup }) => {
     }
   };
 
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setError(null); // Clear any previous errors
+      
+      // Check file size (limit to 5MB for better compatibility)
+      if (file.size > 5 * 1024 * 1024) {
+        setError('Image size must be less than 5MB');
+        return;
+      }
+
+      // Check file type
+      if (!file.type.startsWith('image/')) {
+        setError('Please select a valid image file');
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const base64String = reader.result;
+        setImagePreview(base64String);
+        setFormData(prev => ({
+          ...prev,
+          imageUrl: base64String,
+        }));
+      };
+      reader.onerror = () => {
+        setError('Failed to read image file');
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleRemoveImage = () => {
+    setImagePreview(null);
+    setFormData(prev => ({
+      ...prev,
+      imageUrl: '',
+    }));
+    // Reset the file input
+    const fileInput = document.getElementById('imageFile');
+    if (fileInput) {
+      fileInput.value = '';
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError(null);
     setIsSubmitting(true);
 
     try {
-      await onCreateGroup(formData);
+      // Create a clean copy of the data without empty fields
+      const submitData = {
+        name: formData.name,
+        description: formData.description,
+        activity: formData.activity,
+        category: formData.category,
+        capacity: formData.capacity,
+        privacy: formData.privacy,
+      };
+      
+      // Only add optional fields if they have values
+      if (formData.location && formData.location.trim()) {
+        submitData.location = formData.location;
+      }
+      
+      if (formData.meetingSchedule && formData.meetingSchedule.trim()) {
+        submitData.meetingSchedule = formData.meetingSchedule;
+      }
+      
+      if (formData.imageUrl && formData.imageUrl.trim()) {
+        submitData.imageUrl = formData.imageUrl;
+      }
+      
+      await onCreateGroup(submitData);
+      
       // Reset form
       setFormData({
         name: '',
@@ -74,6 +145,14 @@ const CreateGroupModal = ({ isOpen, onClose, onCreateGroup }) => {
         imageUrl: '',
         privacy: 'public',
       });
+      setImagePreview(null);
+      
+      // Reset file input
+      const fileInput = document.getElementById('imageFile');
+      if (fileInput) {
+        fileInput.value = '';
+      }
+      
       onClose();
     } catch (err) {
       setError(err.message || 'Failed to create group');
@@ -248,30 +327,47 @@ const CreateGroupModal = ({ isOpen, onClose, onCreateGroup }) => {
             />
           </div>
 
-          {/* Image URL */}
+          {/* Cover Image */}
           <div>
-            <label htmlFor="imageUrl" className="block text-sm font-medium text-sage-900 mb-2">
-              Cover Image URL
+            <label className="block text-sm font-medium text-sage-900 mb-2">
+              <Image className="w-4 h-4 inline mr-1" />
+              Cover Image (Optional)
             </label>
-            <input
-              type="url"
-              id="imageUrl"
-              name="imageUrl"
-              value={formData.imageUrl}
-              onChange={handleChange}
-              className="w-full px-4 py-2.5 border border-gray-300 rounded-md focus:ring-2 focus:ring-sage-500 focus:border-transparent"
-              placeholder="https://example.com/image.jpg"
-            />
-            {formData.imageUrl && (
-              <div className="mt-2">
+            
+            {!imagePreview ? (
+              <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center hover:border-sage-500 transition-colors">
+                <label htmlFor="imageFile" className="cursor-pointer block">
+                  <Upload className="w-12 h-12 mx-auto text-gray-400 mb-3" />
+                  <p className="text-sm text-gray-600 mb-1">
+                    Click to upload an image
+                  </p>
+                  <p className="text-xs text-gray-500">
+                    PNG, JPG, GIF up to 5MB
+                  </p>
+                  <input
+                    type="file"
+                    id="imageFile"
+                    accept="image/png,image/jpeg,image/jpg,image/gif,image/webp"
+                    onChange={handleImageChange}
+                    className="hidden"
+                  />
+                </label>
+              </div>
+            ) : (
+              <div className="relative">
                 <img
-                  src={formData.imageUrl}
+                  src={imagePreview}
                   alt="Preview"
-                  className="w-full h-32 object-cover rounded-md"
-                  onError={(e) => {
-                    e.target.style.display = 'none';
-                  }}
+                  className="w-full h-48 object-cover rounded-lg border border-gray-200"
                 />
+                <button
+                  type="button"
+                  onClick={handleRemoveImage}
+                  className="absolute top-2 right-2 p-2 bg-red-500 text-white rounded-full hover:bg-red-600 transition-colors shadow-lg"
+                  title="Remove image"
+                >
+                  <X className="w-4 h-4" />
+                </button>
               </div>
             )}
           </div>

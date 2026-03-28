@@ -55,8 +55,14 @@ const Register = () => {
         return
       }
 
+      // Store authentication data
       localStorage.setItem('token', data.data.accessToken)
-      window.location.href = '/'
+      if (data.data.user?.id) {
+        localStorage.setItem('userId', data.data.user.id)
+      }
+      
+      // Redirect to profile page after registration
+      window.location.href = '/profile'
     } catch (err) {
       alert('Network error')
     } finally {

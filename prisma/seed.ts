@@ -9,6 +9,29 @@ async function main() {
   // Create test users
   const password = await bcrypt.hash('Password123!', 10);
 
+  // Create dev user with fixed ID for development
+  await prisma.user.upsert({
+    where: { id: 'dev-user-id' },
+    update: {},
+    create: {
+      id: 'dev-user-id',
+      email: 'dev@example.com',
+      passwordHash: password,
+      firstName: 'Dev',
+      lastName: 'User',
+      displayName: 'Dev User',
+      bio: 'Development test user',
+      consentGiven: true,
+      consentDate: new Date(),
+      dataProcessingConsent: true,
+      marketingConsent: false,
+      notificationPreference: NotificationLevel.NORMAL,
+      isVerified: true,
+    },
+  });
+
+  console.log('✅ Created dev user');
+
   const users = await Promise.all([
     prisma.user.upsert({
       where: { email: 'alice@example.com' },
@@ -68,8 +91,8 @@ async function main() {
 
   console.log('✅ Created 3 test users');
 
-  // Create a test group
-  const group = await prisma.group.create({
+  // Create test groups with dev-user as member/creator
+  const group1 = await prisma.group.create({
     data: {
       name: 'Mindfulness & Wellbeing',
       description: 'A safe space for sharing experiences and practicing mindfulness together',
@@ -100,6 +123,42 @@ async function main() {
   });
 
   console.log('✅ Created test group with 3 members');
+
+  // Create a group where dev-user is the creator
+  await prisma.group.create({
+    data: {
+      name: 'Developer Community',
+      description: 'A group for developers to connect and share experiences',
+      purpose: 'Programming and tech discussions',
+      maxMembers: 15,
+      isPrivate: false,
+      requireApproval: false,
+      memberships: {
+        create: {
+          userId: 'dev-user-id',
+          role: MemberRole.ADMIN,
+          status: MembershipStatus.ACTIVE,
+        },
+      },
+    },
+  });
+
+  console.log('✅ Created dev user group (dev-user is ADMIN)');
+
+  // Add dev-user to the first group as a MEMBER
+  await prisma.membership.create({
+    data: {
+      userId: 'dev-user-id',
+      groupId: group1.id,
+      role: MemberRole.MEMBER,
+      status: MembershipStatus.ACTIVE,
+    },
+  });
+
+  console.log('✅ Added dev-user to Mindfulness group as MEMBER');
+
+  // Create a test group
+  const group = group1;
 
   // Create some posts
   await prisma.post.createMany({
@@ -146,6 +205,7 @@ async function main() {
   console.log('\n🎉 Database seeding completed successfully!');
   console.log('\nTest credentials:');
   console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+  console.log('Email: dev@example.com   | Password: Password123! (Dev User - Fixed ID)');
   console.log('Email: alice@example.com | Password: Password123!');
   console.log('Email: bob@example.com   | Password: Password123!');
   console.log('Email: carol@example.com | Password: Password123!');
