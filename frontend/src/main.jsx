@@ -25,7 +25,7 @@ const AppWrapper = () => {
     setLoading(true);
     const timer = setTimeout(() => {
       setLoading(false);
-    }, 2000); // 2 second delay
+    }, 1000); // 1 second delay
 
     return () => clearTimeout(timer);
   }, [location.pathname]);

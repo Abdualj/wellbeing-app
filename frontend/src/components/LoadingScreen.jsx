@@ -5,7 +5,7 @@ const LoadingScreen = () => {
         <img 
           src="/logo/wellspring-logo.png" 
           alt="Wellspring Logo" 
-          className="h-40 w-auto mx-auto animate-pulse"
+          className="h-64 w-auto mx-auto animate-pulse"
         />
         <div className="mt-4 flex gap-1 justify-center">
           <div className="w-2 h-2 bg-sage-900 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
