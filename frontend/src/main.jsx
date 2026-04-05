@@ -10,6 +10,8 @@ import Header from './components/Header'
 import LoadingScreen from './components/LoadingScreen'
 import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom'
 import { AppProvider } from './context/AppContext'
+import ProtectedRoutes from './components/ProtectedRoutes';
+
 
 // Development mode: Set dev-user-id if no userId exists
 if (!localStorage.getItem('userId')) {
@@ -37,7 +39,7 @@ const AppWrapper = () => {
       <Routes>
         <Route path="/community" element={<Community />} />
         <Route path="/login" element={<Login />} />
-        <Route path="/profile" element={<Profile />} />
+        <Route path="/profile" element={<ProtectedRoutes><Profile /></ProtectedRoutes>} />
         <Route path="/register" element={<Register />} />
         <Route path="/groups" element={<Groups />} />
       </Routes>

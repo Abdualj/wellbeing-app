@@ -34,13 +34,11 @@ const Login = () => {
         return;
       }
 
-      // Store authentication data
       localStorage.setItem('token', data.data.accessToken);
       if (data.data.user?.id) {
         localStorage.setItem('userId', data.data.user.id);
       }
       
-      // Redirect to profile page after login
       window.location.href = '/profile';
     } catch (err) {
       setError('Network error');
@@ -50,55 +48,61 @@ const Login = () => {
   };
 
   return (
-    <section className="flex items-center justify-center min-h-screen bg-sage-50 backdrop-blur-sm">
-      <div className="flex flex-col items-center w-full max-w-xl">
-        <div className="text-center mb-16">
-          <h1 className="text-5xl text-sage-900 font-bold">Welcome to WellSpring</h1>
-          <h5 className="text-lg text-sage-900 mt-4">Continue your wellness journey</h5>
+    <section className="flex items-center justify-center min-h-screen bg-gradient-to-br from-sage-50 to-gray-50">
+      <div className="flex flex-col items-center w-full max-w-md px-4">
+        <div className="text-center mb-12">
+          <h1 className="text-5xl font-bold text-sage-900 whitespace-nowrap">Welcome to WellSpring</h1>
+          <p className="text-gray-600 mt-4">Continue your wellness journey</p>
         </div>
 
-        <div className="main bg-white px-16 py-20 rounded-3xl text-center w-full shadow-xl border border-gray-100">
-          {error && <p className="text-red-600 mb-4">{error}</p>}
+        {error && (
+          <div className="w-full bg-red-50 border border-red-200 text-red-600 rounded-lg px-4 py-3 mb-6 text-sm">
+            {error}
+          </div>
+        )}
 
-          <form onSubmit={handleSubmit} className="text-lg">
-            <div>
-              <label className="block mt-4 mb-2 text-left font-medium text-sage-900">Email</label>
-              <input
-                name="email"
-                type="email"
-                onChange={handleInputChange}
-                className="block w-full mb-6 px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:border-green-400 bg-gray-50"
-                required
-              />
-            </div>
+        <form onSubmit={handleSubmit} className="w-full space-y-6">
+          <div>
+            <label className="block mb-2 font-medium text-sage-900 text-sm">Email</label>
+            <input
+              name="email"
+              type="email"
+              value={email}
+              onChange={handleInputChange}
+              placeholder="you@example.com"
+              className="w-full px-4 py-3 bg-white border border-sage-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-sage-500 focus:border-transparent transition"
+              required
+            />
+          </div>
 
-            <div>
-              <label className="block mt-4 mb-2 text-left font-medium text-sage-900">Password</label>
-              <input
-                name="password"
-                type="password"
-                onChange={handleInputChange}
-                className="block w-full mb-6 px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:border-green-400 bg-gray-50"
-                required
-              />
-            </div>
+          <div>
+            <label className="block mb-2 font-medium text-sage-900 text-sm">Password</label>
+            <input
+              name="password"
+              type="password"
+              value={password}
+              onChange={handleInputChange}
+              placeholder="Enter your password"
+              className="w-full px-4 py-3 bg-white border border-sage-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-sage-500 focus:border-transparent transition"
+              required
+            />
+          </div>
 
-            <button
-              type="submit"
-              disabled={loading}
-              className="font-medium text-white bg-sage-900 px-6 py-2 rounded-md w-2/3"
-            >
-              {loading ? 'Logging in...' : 'Login'}
-            </button>
-          </form>
+          <button
+            type="submit"
+            disabled={loading}
+            className="w-full font-medium text-white bg-sage-700 hover:bg-sage-800 py-3 rounded-lg transition active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            {loading ? 'Logging in...' : 'Login'}
+          </button>
+        </form>
 
-          <p className="mt-6 text-sage-900">
-            Not a member?{' '}
-            <a href="./register" className="text-sage-900 hover:underline">
-              Register Here
-            </a>
-          </p>
-        </div>
+        <p className="mt-6 text-center text-gray-600 text-sm">
+          Not a member?{' '}
+          <a href="./register" className="text-sage-700 font-medium hover:text-sage-800 transition">
+            Register Here
+          </a>
+        </p>
       </div>
     </section>
   );
