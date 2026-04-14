@@ -1,9 +1,9 @@
 import { useNavigate } from 'react-router-dom';
-import { Users, Plus, Crown, Star } from 'lucide-react';
-import useUserProfile from "../../Hooks/useUserProfile";
+import { Users, Plus, Crown, Star, RefreshCw } from 'lucide-react';
+import { useApp } from '../../context/AppContext';
 
 const GroupCard = () => {
-    const { groups = [], loading } = useUserProfile();
+    const { groups = [], profileLoading: loading } = useApp();
     const navigate = useNavigate();
 
     // Separate groups into created (ADMIN) and joined (MEMBER/FACILITATOR)
@@ -71,6 +71,14 @@ const GroupCard = () => {
 
     return (
         <div className="w-[600px] space-y-6">
+            {/* Loading indicator when refreshing */}
+            {loading && shouldRefreshProfile > 0 && (
+                <div className="flex items-center justify-center gap-2 py-2 px-4 bg-sage-50 border border-sage-200 rounded-lg">
+                    <RefreshCw className="w-4 h-4 text-sage-600 animate-spin" />
+                    <span className="text-sm text-sage-700 font-medium">Updating your groups...</span>
+                </div>
+            )}
+            
             {/* Created Groups Section */}
             {createdGroups.length > 0 && (
                 <div>

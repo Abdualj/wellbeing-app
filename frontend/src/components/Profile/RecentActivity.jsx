@@ -1,7 +1,7 @@
-import useUserProfile from "../../Hooks/useUserProfile"
+import { useApp } from '../../context/AppContext';
 
 const RecentActivity = () => {
-    const { groups = [] } = useUserProfile();
+    const { groups = [] } = useApp();
     const tags = [...new Set(groups.map(group => group.category))].filter(Boolean);
 
     return (

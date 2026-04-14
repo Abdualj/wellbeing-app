@@ -1,11 +1,11 @@
 import { SquarePen, Settings } from 'lucide-react';
 import { useState } from 'react';
 import EditModal from './Modal'
-import useUserProfile from '../../Hooks/useUserProfile'
+import { useApp } from '../../context/AppContext';
 
 const ProfileCard = () => {
     const [isEdit, setEdit] = useState(false)
-    const { user, groups = [], refetch } = useUserProfile();
+    const { user, groups = [], refetchProfile } = useApp();
 
 
   const uploadPfp= async (file) => {
@@ -24,7 +24,7 @@ const ProfileCard = () => {
         });
 
         if (res.ok) {
-            refetch()
+            refetchProfile()
         } 
     } catch (error) {
         console.log('Error', error.message)
@@ -32,7 +32,7 @@ const ProfileCard = () => {
     };
 
     const handleSave = () => {
-        refetch()
+        refetchProfile()
     }
 
     const handlePfpChange = (e) => {
@@ -102,7 +102,7 @@ console.log(user);
                 <p className="text-sm text-gray-500 mt-1">{user?.bio || "No bio added yet"}</p>
             </div>
 
-            <EditModal isOpen={isEdit} setEdit={setEdit} user={user} refetch={refetch} />
+            <EditModal isOpen={isEdit} setEdit={setEdit} user={user} refetch={refetchProfile} />
         </div>
     )
 };

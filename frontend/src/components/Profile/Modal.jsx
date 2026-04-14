@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import useUserProfile from '../../Hooks/useUserProfile'
 
 
 const EditModal = ({ isOpen, setEdit, refetch }) => {

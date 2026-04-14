@@ -8,8 +8,9 @@ import Community from './views/Community'
 import Groups from './views/Groups'
 import Header from './components/Header'
 import LoadingScreen from './components/LoadingScreen'
+import Toast from './components/Toast'
 import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom'
-import { AppProvider } from './context/AppContext'
+import { AppProvider, useApp } from './context/AppContext'
 import ProtectedRoutes from './components/ProtectedRoutes';
 
 
@@ -22,6 +23,7 @@ if (!localStorage.getItem('userId')) {
 const AppWrapper = () => {
   const [loading, setLoading] = useState(false);
   const location = useLocation();
+  const { toast, hideToast } = useApp();
 
   useEffect(() => {
     setLoading(true);
@@ -35,6 +37,7 @@ const AppWrapper = () => {
   return (
     <>
       {loading && <LoadingScreen />}
+      {toast && <Toast message={toast.message} type={toast.type} onClose={hideToast} />}
       <Header />
       <Routes>
         <Route path="/community" element={<Community />} />

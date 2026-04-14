@@ -11,7 +11,7 @@ import { useApp } from '../context/AppContext';
 
 const Groups = () => {
   // Context
-  const { triggerProfileRefresh } = useApp();
+  const { triggerProfileRefresh, showToast } = useApp();
   
   // State Management
   const [groups, setGroups] = useState([]);
@@ -184,13 +184,13 @@ const Groups = () => {
       );
 
       const groupName = groups.find(g => g.id === groupId)?.name;
-      alert(`You've joined ${groupName}!`);
+      showToast(`You've joined ${groupName}! Check your profile to see it.`, 'success');
       
       // Trigger profile refresh to update "My Groups" section
       triggerProfileRefresh();
     } catch (err) {
       console.error('Error joining group:', err);
-      alert(err.message || 'Failed to join group. Please try again.');
+      showToast(err.message || 'Failed to join group. Please try again.', 'error');
     } finally {
       setJoiningGroupId(null);
     }
@@ -204,7 +204,7 @@ const Groups = () => {
       // Add the new group to the list
       if (response && response.data) {
         setGroups(prevGroups => [response.data, ...prevGroups]);
-        alert(`Group "${groupData.name}" created successfully!`);
+        showToast(`Group "${groupData.name}" created successfully! Check your profile.`, 'success');
       }
       
       // Trigger profile refresh to update "My Groups" section
