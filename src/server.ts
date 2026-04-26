@@ -2,6 +2,8 @@ import app from './app';
 import { config } from './config';
 import logger from './config/logger';
 import prisma from './config/database';
+import { initializeWebSocket } from './websocket';
+import http from 'http';
 
 const startServer = async () => {
   try {
@@ -9,8 +11,15 @@ const startServer = async () => {
     await prisma.$connect();
     logger.info('Database connected successfully');
 
+    // Create HTTP server
+    const httpServer = http.createServer(app);
+
+    // Initialize WebSocket
+    initializeWebSocket(httpServer);
+    logger.info('WebSocket server initialized');
+
     // Start server
-    const server = app.listen(config.port, () => {
+    const server = httpServer.listen(config.port, () => {
       logger.info(`
 ╔════════════════════════════════════════════════════════╗
 ║  Wellbeing App Backend Server                          ║
@@ -18,6 +27,7 @@ const startServer = async () => {
 ║  Port: ${config.port.toString().padEnd(47)}║
 ║  API Version: ${config.apiVersion.padEnd(42)}║
 ║  API Docs: http://localhost:${config.port}/api-docs${' '.padEnd(14)}║
+║  WebSocket: Enabled${' '.padEnd(36)}║
 ╚════════════════════════════════════════════════════════╝
       `);
     });

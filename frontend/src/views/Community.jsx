@@ -1,11 +1,11 @@
 import { useState } from 'react'
 import ShareModal from '../components/Community/ShareModal'
-import useUserProfile from '../Hooks/useUserProfile'
+import { useApp } from '../context/AppContext'
 
 const Community = () => {
   const [showShare, setShowShare] = useState(false)
   const [activeTab, setActiveTab] = useState('public')
-  const { user } = useUserProfile()
+  const { user } = useApp()
 
   return (
     <div className="min-h-screen bg-gray-50">

@@ -250,9 +250,12 @@ export const usersAPI = {
   },
 
   getUserGroups: async () => {
-    const response = await fetch(`${API_BASE_URL}/users/groups`, {
+    // Add timestamp to prevent caching
+    const timestamp = new Date().getTime();
+    const response = await fetch(`${API_BASE_URL}/users/groups?_t=${timestamp}`, {
       method: 'GET',
       headers: getAuthHeaders(),
+      cache: 'no-store', // Disable caching
     });
     
     return handleResponse(response);
@@ -268,10 +271,115 @@ export const usersAPI = {
   },
 };
 
+// Debug API (only available in development)
+export const debugAPI = {
+  getMemberships: async () => {
+    const response = await fetch(`${API_BASE_URL}/debug/memberships`, {
+      method: 'GET',
+      headers: getAuthHeaders(),
+    });
+    
+    return handleResponse(response);
+  },
+};
+
+// Messages API
+export const messagesAPI = {
+  // Send a message to a group
+  send: async (groupId, content) => {
+    const response = await fetch(`${API_BASE_URL}/messages/groups/${groupId}/messages`, {
+      method: 'POST',
+      headers: getAuthHeaders(),
+      body: JSON.stringify({ content }),
+    });
+    
+    return handleResponse(response);
+  },
+
+  // Get messages for a group
+  getGroupMessages: async (groupId, params = {}) => {
+    const queryParams = new URLSearchParams();
+    if (params.limit) queryParams.append('limit', params.limit);
+    if (params.before) queryParams.append('before', params.before);
+    
+    const response = await fetch(
+      `${API_BASE_URL}/messages/groups/${groupId}/messages?${queryParams}`,
+      {
+        method: 'GET',
+        headers: getAuthHeaders(),
+      }
+    );
+    
+    return handleResponse(response);
+  },
+
+  // Edit a message
+  edit: async (messageId, content) => {
+    const response = await fetch(`${API_BASE_URL}/messages/messages/${messageId}`, {
+      method: 'PUT',
+      headers: getAuthHeaders(),
+      body: JSON.stringify({ content }),
+    });
+    
+    return handleResponse(response);
+  },
+
+  // Delete a message
+  delete: async (messageId) => {
+    const response = await fetch(`${API_BASE_URL}/messages/messages/${messageId}`, {
+      method: 'DELETE',
+      headers: getAuthHeaders(),
+    });
+    
+    return handleResponse(response);
+  },
+
+  // Mark message as read
+  markAsRead: async (messageId) => {
+    const response = await fetch(`${API_BASE_URL}/messages/messages/${messageId}/read`, {
+      method: 'POST',
+      headers: getAuthHeaders(),
+    });
+    
+    return handleResponse(response);
+  },
+
+  // Mark all messages in a group as read
+  markAllAsRead: async (groupId) => {
+    const response = await fetch(`${API_BASE_URL}/messages/groups/${groupId}/mark-all-read`, {
+      method: 'POST',
+      headers: getAuthHeaders(),
+    });
+    
+    return handleResponse(response);
+  },
+
+  // Get unread count for a group
+  getUnreadCount: async (groupId) => {
+    const response = await fetch(`${API_BASE_URL}/messages/groups/${groupId}/unread-count`, {
+      method: 'GET',
+      headers: getAuthHeaders(),
+    });
+    
+    return handleResponse(response);
+  },
+
+  // Get unread counts for all groups
+  getUnreadCounts: async () => {
+    const response = await fetch(`${API_BASE_URL}/messages/unread-counts`, {
+      method: 'GET',
+      headers: getAuthHeaders(),
+    });
+    
+    return handleResponse(response);
+  },
+};
+
 export default {
   groups: groupsAPI,
   posts: postsAPI,
   events: eventsAPI,
   auth: authAPI,
   users: usersAPI,
+  messages: messagesAPI,
 };

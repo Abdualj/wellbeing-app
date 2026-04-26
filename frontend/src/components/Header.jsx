@@ -1,4 +1,4 @@
-import { Users, CircleUserRound, Heart, LogOut, BellOff } from "lucide-react";
+import { Users, CircleUserRound, Home, LogOut, BellOff, MessageCircle } from "lucide-react";
 
 const Header = () => {
   const isLoggedIn = !!localStorage.getItem("token");
@@ -27,38 +27,31 @@ const Header = () => {
           </a>
 
           <div className="flex items-center gap-1 sm:gap-2 md:gap-4">
-            <a href="/community" className="flex items-center gap-1 sm:gap-2 px-2 sm:px-3 md:px-5 py-2 rounded-lg text-xs sm:text-sm font-medium text-gray-900 transition hover:bg-sage-900 hover:text-white">
-              <Heart size={18} className="hidden sm:inline" /> 
-              <span className="hidden md:inline">Community</span>
-              <span className="md:hidden">
-                <Heart size={18} />
-              </span>
+            <a href="/community" className="flex items-center gap-1 sm:gap-2 px-2 sm:px-3 md:px-4 py-2 rounded-lg text-xs sm:text-sm font-medium text-gray-900 transition hover:bg-sage-900 hover:text-white" title="Community">
+              <Home size={20} />
             </a>
-            <a href="/groups" className="flex items-center gap-1 sm:gap-2 px-2 sm:px-3 md:px-5 py-2 rounded-lg text-xs sm:text-sm font-medium text-gray-900 transition hover:bg-sage-900 hover:text-white">
-              <Users size={18} className="hidden sm:inline" /> 
-              <span className="hidden md:inline">Groups</span>
-              <span className="md:hidden">
-                <Users size={18} />
-              </span>
+            <a href="/groups" className="flex items-center gap-1 sm:gap-2 px-2 sm:px-3 md:px-4 py-2 rounded-lg text-xs sm:text-sm font-medium text-gray-900 transition hover:bg-sage-900 hover:text-white" title="Groups">
+              <Users size={20} />
             </a>
 
             {isLoggedIn && (
               <>
-                <a href="/profile" className="flex items-center gap-1 sm:gap-2 px-2 sm:px-3 md:px-5 py-2 rounded-lg text-xs sm:text-sm font-medium text-gray-900 transition hover:bg-sage-900 hover:text-white">
-                  <CircleUserRound size={18} className="hidden sm:inline" /> 
-                  <span className="hidden md:inline">Profile</span>
-                  <span className="md:hidden">
-                    <CircleUserRound size={18} />
-                  </span>
+                <a href="/chats" className="flex items-center gap-1 sm:gap-2 px-2 sm:px-3 md:px-4 py-2 rounded-lg text-xs sm:text-sm font-medium text-gray-900 transition hover:bg-sage-900 hover:text-white" title="Chats">
+                  <MessageCircle size={20} />
+                </a>
+                <a href="/profile" className="flex items-center gap-1 sm:gap-2 px-2 sm:px-3 md:px-4 py-2 rounded-lg text-xs sm:text-sm font-medium text-gray-900 transition hover:bg-sage-900 hover:text-white" title="Profile">
+                  <CircleUserRound size={20} />
                 </a>
                 <div className="h-5 w-px bg-gray-300 mx-1 sm:mx-2 hidden sm:block" />
-                <button className="text-gray-600 hover:text-sage-900 hidden sm:block">
+                <button className="text-gray-600 hover:text-sage-900 hidden sm:block" title="Notifications">
                   <BellOff size={20} />
                 </button>
                 <button
                   onClick={handleLogout}
-                  className="text-gray-600 hover:text-sage-900 p-1 sm:p-0">
-                  <LogOut size={18} sm:size={20} />
+                  className="text-gray-600 hover:text-sage-900 p-1 sm:p-0"
+                  title="Logout"
+                >
+                  <LogOut size={20} />
                 </button>
               </>
             )}
