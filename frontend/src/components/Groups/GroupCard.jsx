@@ -1,6 +1,42 @@
-import { Users, MapPin, Check, Clock } from 'lucide-react';
+import { Users, MapPin, Check, Clock, MessageCircle } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { messagesAPI } from '../../services/api';
+import { useSocket } from '../../Hooks/useSocket';
 
 const GroupCard = ({ group, isUserInGroup, status, onJoinGroup, isJoining }) => {
+  const navigate = useNavigate();
+  const [unreadCount, setUnreadCount] = useState(0);
+  const { socket } = useSocket(isUserInGroup ? group.id : null);
+
+  // Fetch unread count for groups the user has joined
+  useEffect(() => {
+    if (isUserInGroup && group.id) {
+      messagesAPI.getUnreadCount(group.id)
+        .then(response => {
+          setUnreadCount(response.unreadCount || 0);
+        })
+        .catch(error => {
+          console.error('Failed to fetch unread count:', error);
+        });
+    }
+  }, [isUserInGroup, group.id]);
+
+  // Listen for new messages to update unread count
+  useEffect(() => {
+    if (!socket || !isUserInGroup) return;
+
+    const handleNewMessage = () => {
+      // Increment unread count when new message arrives
+      setUnreadCount(prev => prev + 1);
+    };
+
+    socket.on('message:new', handleNewMessage);
+
+    return () => {
+      socket.off('message:new', handleNewMessage);
+    };
+  }, [socket, isUserInGroup]);
   const getStatusBadge = () => {
     switch (status) {
       case 'joined':
@@ -87,12 +123,29 @@ const GroupCard = ({ group, isUserInGroup, status, onJoinGroup, isJoining }) => 
         )}
 
         {isUserInGroup && (
-          <button
-            className="w-full bg-gray-100 text-gray-700 py-2.5 rounded-md cursor-default font-medium"
-            disabled
-          >
-            Member
-          </button>
+          <div className="flex gap-2">
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                navigate(`/groups/${group.id}/chat`);
+              }}
+              className="flex-1 bg-sage-600 text-white py-2.5 rounded-md hover:bg-sage-700 transition active:scale-95 font-medium flex items-center justify-center gap-2 relative"
+            >
+              <MessageCircle className="w-4 h-4" />
+              Chat
+              {unreadCount > 0 && (
+                <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
+                  {unreadCount > 9 ? '9+' : unreadCount}
+                </span>
+              )}
+            </button>
+            <button
+              className="px-4 bg-gray-100 text-gray-700 py-2.5 rounded-md font-medium"
+              title="Member"
+            >
+              ✓
+            </button>
+          </div>
         )}
 
         {status === 'full' && !isUserInGroup && (

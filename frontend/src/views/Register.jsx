@@ -23,48 +23,86 @@ const Register = () => {
     event.preventDefault()
     setError('')
 
+    console.log('[Register] Starting registration...');
+    console.log('[Register] Form data:', { firstName, lastName, email, dataProcessingConsent });
+
+    // Validation
+    if (!firstName.trim()) {
+      setError('First name is required');
+      return;
+    }
+
+    if (!lastName.trim()) {
+      setError('Last name is required');
+      return;
+    }
+
+    if (!email.trim() || !email.includes('@')) {
+      setError('Valid email is required');
+      return;
+    }
+
+    if (password.length < 8) {
+      setError('Password must be at least 8 characters');
+      return;
+    }
+
     if (password !== confirmPassword) {
       setError('Passwords do not match')
+      console.error('[Register] Password mismatch');
       return
     }
 
     if (!dataProcessingConsent) {
       setError('You must consent to data processing')
+      console.error('[Register] No consent given');
       return
     }
 
     setLoading(true)
 
     try {
+      const payload = {
+        firstName,
+        lastName,
+        email,
+        password,
+        consentGiven: dataProcessingConsent,
+        dataProcessingConsent,
+        marketingConsent: false
+      };
+
+      console.log('[Register] Sending request with payload:', { ...payload, password: '[REDACTED]' });
+
       const res = await fetch('http://localhost:3000/api/v1/auth/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          firstName,
-          lastName,
-          email,
-          password,
-          consentGiven: dataProcessingConsent,
-          dataProcessingConsent,
-          marketingConsent: false
-        })
+        body: JSON.stringify(payload)
       })
 
+      console.log('[Register] Response status:', res.status);
+
       const data = await res.json()
+      console.log('[Register] Response data:', data);
 
       if (!res.ok) {
-        setError(data.message || 'Registration failed')
+        const errorMsg = data.message || data.error || 'Registration failed';
+        console.error('[Register] Registration failed:', errorMsg);
+        setError(errorMsg)
         return
       }
 
+      console.log('[Register] Registration successful!');
       localStorage.setItem('token', data.data.accessToken)
       if (data.data.user?.id) {
         localStorage.setItem('userId', data.data.user.id)
       }
       
+      console.log('[Register] Redirecting to profile...');
       window.location.href = '/profile'
     } catch (err) {
-      setError('Network error')
+      console.error('[Register] Network error:', err);
+      setError('Network error: ' + err.message)
     } finally {
       setLoading(false)
     }
@@ -135,6 +173,7 @@ const Register = () => {
               className="w-full px-4 py-3 bg-white border border-sage-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-sage-500 focus:border-transparent transition"
               required
             />
+            <p className="mt-1 text-xs text-gray-500">Password must be at least 8 characters</p>
           </div>
 
           <div>

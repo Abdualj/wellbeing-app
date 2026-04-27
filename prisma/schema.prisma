@@ -291,3 +291,54 @@ model AuditLog {
   @@index([createdAt])
   @@map("audit_logs")
 }
+
+// Message model for group chat
+model Message {
+  id                String    @id @default(uuid())
+  content           String    @db.Text
+  
+  // Relations
+  groupId           String
+  userId            String
+  
+  // Message metadata
+  isEdited          Boolean   @default(false)
+  editedAt          DateTime?
+  isDeleted         Boolean   @default(false)
+  deletedAt         DateTime?
+  
+  // Timestamps
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+  
+  // Relations
+  group             Group     @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  user              User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  readReceipts      MessageReadReceipt[]
+  
+  @@index([groupId])
+  @@index([userId])
+  @@index([createdAt])
+  @@map("messages")
+}
+
+// Track who has read which messages
+model MessageReadReceipt {
+  id                String    @id @default(uuid())
+  
+  // Relations
+  messageId         String
+  userId            String
+  
+  // Timestamps
+  readAt            DateTime  @default(now())
+  
+  // Relations
+  message           Message   @relation(fields: [messageId], references: [id], onDelete: Cascade)
+  user              User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@unique([messageId, userId])
+  @@index([userId])
+  @@index([messageId])
+  @@map("message_read_receipts")
+}

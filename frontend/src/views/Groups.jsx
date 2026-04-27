@@ -186,8 +186,10 @@ const Groups = () => {
       const groupName = groups.find(g => g.id === groupId)?.name;
       showToast(`You've joined ${groupName}! Check your profile to see it.`, 'success');
       
-      // Trigger profile refresh to update "My Groups" section
-      triggerProfileRefresh();
+      // Wait a bit for backend to process, then trigger profile refresh
+      setTimeout(() => {
+        triggerProfileRefresh();
+      }, 500);
     } catch (err) {
       console.error('Error joining group:', err);
       showToast(err.message || 'Failed to join group. Please try again.', 'error');

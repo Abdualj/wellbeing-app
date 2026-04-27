@@ -182,6 +182,8 @@ export class UserService {
   }
 
   async getUserGroups(userId: string) {
+    console.log(`[UserService] 🔍 Fetching groups for user: ${userId}`);
+    
     const memberships = await prisma.membership.findMany({
       where: {
         userId,
@@ -211,11 +213,20 @@ export class UserService {
       },
     });
 
-    return memberships.map((m) => ({
-      ...m.group,
-      role: m.role,
-      joinedAt: m.joinedAt,
-      memberCount: m.group._count.memberships,
-    }));
+    console.log(`[UserService] 📊 Found ${memberships.length} active memberships`);
+    
+    const groupsData = memberships.map((m) => {
+      const group = {
+        ...m.group,
+        role: m.role,
+        joinedAt: m.joinedAt,
+        memberCount: m.group._count.memberships,
+      };
+      console.log(`[UserService] 👥 Group: ${group.name}, Role: ${group.role}, ID: ${group.id}`);
+      return group;
+    });
+
+    console.log(`[UserService] ✅ Returning ${groupsData.length} groups to client`);
+    return groupsData;
   }
 }
