@@ -13,7 +13,48 @@ router.use(authenticate);
 
 /**
  * @swagger
- * /api/v1/groups/:groupId/posts:
+ * /api/v1/posts/public-feed:
+ *   get:
+ *     summary: Get public feed (all posts)
+ *     tags: [Posts]
+ *     security:
+ *       - bearerAuth: []
+ */
+router.get('/public-feed', postController.getPublicFeed);
+
+/**
+ * @swagger
+ * /api/v1/posts/group-feed:
+ *   get:
+ *     summary: Get group feed (posts from user's groups)
+ *     tags: [Posts]
+ *     security:
+ *       - bearerAuth: []
+ */
+router.get('/group-feed', postController.getGroupFeed);
+
+/**
+ * @swagger
+ * /api/v1/posts/public:
+ *   post:
+ *     summary: Create a public post (no group)
+ *     tags: [Posts]
+ *     security:
+ *       - bearerAuth: []
+ */
+router.post(
+  '/public',
+  validate([
+    body('content').notEmpty().withMessage('Content is required'),
+    body('attachments').optional().isArray(),
+  ]),
+  auditLog('POST_CREATE', 'Post'),
+  postController.createPublicPost
+);
+
+/**
+ * @swagger
+ * /api/v1/groups/{groupId}/posts:
  *   post:
  *     summary: Create a post in a group
  *     tags: [Posts]
@@ -21,7 +62,7 @@ router.use(authenticate);
  *       - bearerAuth: []
  */
 router.post(
-  '/:groupId/posts',
+  '/groups/:groupId/posts',
   validate([
     param('groupId').isUUID().withMessage('Invalid group ID'),
     body('content').notEmpty().withMessage('Content is required'),
@@ -34,7 +75,7 @@ router.post(
 
 /**
  * @swagger
- * /api/v1/groups/:groupId/posts:
+ * /api/v1/groups/{groupId}/posts:
  *   get:
  *     summary: Get posts from a group
  *     tags: [Posts]
@@ -42,7 +83,7 @@ router.post(
  *       - bearerAuth: []
  */
 router.get(
-  '/:groupId/posts',
+  '/groups/:groupId/posts',
   validate([param('groupId').isUUID().withMessage('Invalid group ID')]),
   isGroupMember,
   postController.getGroupPosts
@@ -50,7 +91,7 @@ router.get(
 
 /**
  * @swagger
- * /api/v1/posts/:postId:
+ * /api/v1/posts/{postId}:
  *   get:
  *     summary: Get a specific post with comments
  *     tags: [Posts]
@@ -65,7 +106,7 @@ router.get(
 
 /**
  * @swagger
- * /api/v1/posts/:postId:
+ * /api/v1/posts/{postId}:
  *   put:
  *     summary: Update a post
  *     tags: [Posts]
@@ -84,7 +125,7 @@ router.put(
 
 /**
  * @swagger
- * /api/v1/posts/:postId:
+ * /api/v1/posts/{postId}:
  *   delete:
  *     summary: Delete a post
  *     tags: [Posts]
@@ -100,7 +141,23 @@ router.delete(
 
 /**
  * @swagger
- * /api/v1/posts/:postId/comments:
+ * /api/v1/posts/{postId}/like:
+ *   post:
+ *     summary: Like or unlike a post (toggle)
+ *     tags: [Posts]
+ *     security:
+ *       - bearerAuth: []
+ */
+router.post(
+  '/:postId/like',
+  validate([param('postId').isUUID().withMessage('Invalid post ID')]),
+  auditLog('POST_LIKE', 'Like'),
+  postController.likePost
+);
+
+/**
+ * @swagger
+ * /api/v1/posts/{postId}/comments:
  *   post:
  *     summary: Add a comment to a post
  *     tags: [Posts]
@@ -119,7 +176,7 @@ router.post(
 
 /**
  * @swagger
- * /api/v1/comments/:commentId:
+ * /api/v1/posts/comments/{commentId}:
  *   delete:
  *     summary: Delete a comment
  *     tags: [Posts]

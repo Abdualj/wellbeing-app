@@ -5,29 +5,39 @@ import { MembershipStatus } from '@prisma/client';
 interface CreatePostData {
   content: string;
   attachments?: string[];
+  visibility?: 'PUBLIC' | 'GROUP';
 }
 
 export class PostService {
-  async createPost(groupId: string, userId: string, data: CreatePostData) {
-    // Verify membership
-    const membership = await prisma.membership.findUnique({
-      where: {
-        userId_groupId: {
-          userId,
-          groupId,
+  async createPost(
+    userId: string,
+    groupId: string | null,
+    data: CreatePostData
+  ) {
+    if (groupId) {
+      // Verify membership
+      const membership = await prisma.membership.findUnique({
+        where: {
+          userId_groupId: {
+            userId,
+            groupId,
+          },
         },
-      },
-    });
+      });
 
-    if (!membership || membership.status !== MembershipStatus.ACTIVE) {
-      throw new AppError('Access denied: Not a member of this group', 403);
+      if (!membership || membership.status !== MembershipStatus.ACTIVE) {
+        throw new AppError('Access denied: Not a member of this group', 403);
+      }
     }
 
     const post = await prisma.post.create({
       data: {
-        groupId,
+        groupId: groupId || null,
         authorId: userId,
         content: data.content,
+        visibility: groupId 
+          ? (data.visibility === 'PUBLIC' ? 'PUBLIC' : 'GROUP')
+          : 'PUBLIC',
         attachments: data.attachments || [],
       },
       include: {
@@ -40,9 +50,16 @@ export class PostService {
             avatar: true,
           },
         },
+        group: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
         _count: {
           select: {
             comments: true,
+            likes: true,
           },
         },
       },
@@ -51,7 +68,123 @@ export class PostService {
     return post;
   }
 
-  async getGroupPosts(groupId: string, userId: string, limit = 20, offset = 0) {
+  async getPublicFeed(limit: number, offset: number) {
+    return prisma.post.findMany({
+      where: {
+        isDeleted: false,
+        visibility: 'PUBLIC',
+      },
+      take: limit,
+      skip: offset,
+      orderBy: { createdAt: 'desc' },
+      include: {
+        author: {
+          select: {
+            id: true,
+            firstName: true,
+            lastName: true,
+            avatar: true,
+          },
+        },
+        group: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
+        comments: {
+          where: { isDeleted: false },
+          take: 10,
+          orderBy: { createdAt: 'desc' },
+          include: {
+            author: {
+              select: {
+                id: true,
+                firstName: true,
+                lastName: true,
+                avatar: true,
+              },
+            },
+          },
+        },
+        _count: {
+          select: { 
+            comments: true,
+            likes: true,
+          },
+        },
+      },
+    });
+  }
+
+  async getGroupFeed(userId: string, limit: number, offset: number) {
+    const memberships = await prisma.membership.findMany({
+      where: {
+        userId,
+        status: MembershipStatus.ACTIVE,
+      },
+      select: {
+        groupId: true,
+      },
+    });
+
+    const groupIds = memberships.map((m) => m.groupId);
+
+    return prisma.post.findMany({
+      where: {
+        isDeleted: false,
+        groupId: { in: groupIds },
+        visibility: 'GROUP',
+      },
+      take: limit,
+      skip: offset,
+      orderBy: { createdAt: 'desc' },
+      include: {
+        author: {
+          select: {
+            id: true,
+            firstName: true,
+            lastName: true,
+            avatar: true,
+          },
+        },
+        group: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
+        comments: {
+          where: { isDeleted: false },
+          take: 10,
+          orderBy: { createdAt: 'desc' },
+          include: {
+            author: {
+              select: {
+                id: true,
+                firstName: true,
+                lastName: true,
+                avatar: true,
+              },
+            },
+          },
+        },
+        _count: {
+          select: { 
+            comments: true,
+            likes: true,
+          },
+        },
+      },
+    });
+  }
+
+  async getGroupPosts(
+    groupId: string,
+    userId: string,
+    limit = 20,
+    offset = 0
+  ) {
     // Verify membership
     const membership = await prisma.membership.findUnique({
       where: {
@@ -66,7 +199,7 @@ export class PostService {
       throw new AppError('Access denied: Not a member of this group', 403);
     }
 
-    const posts = await prisma.post.findMany({
+    return prisma.post.findMany({
       where: {
         groupId,
         isDeleted: false,
@@ -86,17 +219,14 @@ export class PostService {
             comments: {
               where: { isDeleted: false },
             },
+            likes: true,
           },
         },
       },
-      orderBy: {
-        createdAt: 'desc',
-      },
+      orderBy: { createdAt: 'desc' },
       take: limit,
       skip: offset,
     });
-
-    return posts;
   }
 
   async getPost(postId: string, userId: string) {
@@ -131,83 +261,59 @@ export class PostService {
               },
             },
           },
-          orderBy: {
-            createdAt: 'asc',
+          orderBy: { createdAt: 'asc' },
+        },
+      },
+    });
+
+    if (!post) throw new AppError('Post not found', 404);
+
+    if (post.groupId && post.visibility === 'GROUP') {
+      // Verify membership
+      const membership = await prisma.membership.findUnique({
+        where: {
+          userId_groupId: {
+            userId,
+            groupId: post.groupId,
           },
         },
-      },
-    });
+      });
 
-    if (!post) {
-      throw new AppError('Post not found', 404);
-    }
-
-    // Verify membership
-    const membership = await prisma.membership.findUnique({
-      where: {
-        userId_groupId: {
-          userId,
-          groupId: post.groupId,
-        },
-      },
-    });
-
-    if (!membership || membership.status !== MembershipStatus.ACTIVE) {
-      throw new AppError('Access denied: Not a member of this group', 403);
+      if (!membership || membership.status !== MembershipStatus.ACTIVE) {
+        throw new AppError('Access denied', 403);
+      }
     }
 
     return post;
   }
 
-  async updatePost(postId: string, userId: string, data: { content: string }) {
-    const post = await prisma.post.findUnique({
-      where: { id: postId },
-    });
+  async updatePost(
+    postId: string,
+    userId: string,
+    data: { content: string }
+  ) {
+    const post = await prisma.post.findUnique({ where: { id: postId } });
 
-    if (!post) {
-      throw new AppError('Post not found', 404);
-    }
-
-    if (post.authorId !== userId) {
+    if (!post) throw new AppError('Post not found', 404);
+    if (post.authorId !== userId)
       throw new AppError('Access denied: You can only edit your own posts', 403);
-    }
+    if (post.isDeleted) throw new AppError('Cannot edit deleted post', 400);
 
-    if (post.isDeleted) {
-      throw new AppError('Cannot edit deleted post', 400);
-    }
-
-    const updatedPost = await prisma.post.update({
+    return prisma.post.update({
       where: { id: postId },
-      data: {
-        content: data.content,
-      },
-      include: {
-        author: {
-          select: {
-            id: true,
-            firstName: true,
-            lastName: true,
-            displayName: true,
-            avatar: true,
-          },
-        },
-      },
+      data: { content: data.content },
     });
-
-    return updatedPost;
   }
 
   async deletePost(postId: string, userId: string) {
-    const post = await prisma.post.findUnique({
-      where: { id: postId },
-    });
+    const post = await prisma.post.findUnique({ where: { id: postId } });
 
-    if (!post) {
-      throw new AppError('Post not found', 404);
-    }
+    if (!post) throw new AppError('Post not found', 404);
 
     // User can delete own post, or facilitator can delete any post
     if (post.authorId !== userId) {
+      if (!post.groupId) throw new AppError('Post not found', 404);
+
       const membership = await prisma.membership.findUnique({
         where: {
           userId_groupId: {
@@ -219,7 +325,8 @@ export class PostService {
 
       if (
         !membership ||
-        (membership.role !== 'FACILITATOR' && membership.role !== 'ADMIN')
+        (membership.role !== 'FACILITATOR' &&
+          membership.role !== 'ADMIN')
       ) {
         throw new AppError('Access denied', 403);
       }
@@ -236,95 +343,130 @@ export class PostService {
     return { message: 'Post deleted successfully' };
   }
 
-  async createComment(postId: string, userId: string, content: string) {
+  async createComment(
+    postId: string,
+    userId: string,
+    content: string
+  ) {
     const post = await prisma.post.findUnique({
       where: { id: postId },
-      include: { group: true },
     });
 
-    if (!post) {
-      throw new AppError('Post not found', 404);
-    }
+    if (!post) throw new AppError('Post not found', 404);
 
-    // Verify membership
-    const membership = await prisma.membership.findUnique({
-      where: {
-        userId_groupId: {
-          userId,
-          groupId: post.groupId,
+    if (post.groupId && post.visibility === 'GROUP') {
+      // Verify membership
+      const membership = await prisma.membership.findUnique({
+        where: {
+          userId_groupId: {
+            userId,
+            groupId: post.groupId,
+          },
         },
-      },
-    });
+      });
 
-    if (!membership || membership.status !== MembershipStatus.ACTIVE) {
-      throw new AppError('Access denied: Not a member of this group', 403);
+      if (!membership || membership.status !== MembershipStatus.ACTIVE) {
+        throw new AppError('Access denied', 403);
+      }
     }
 
-    const comment = await prisma.comment.create({
+    return prisma.comment.create({
       data: {
         postId,
         authorId: userId,
         content,
       },
-      include: {
-        author: {
-          select: {
-            id: true,
-            firstName: true,
-            lastName: true,
-            displayName: true,
-            avatar: true,
-          },
-        },
-      },
     });
-
-    return comment;
   }
 
   async deleteComment(commentId: string, userId: string) {
     const comment = await prisma.comment.findUnique({
       where: { id: commentId },
-      include: {
-        post: {
-          include: {
-            group: true,
-          },
-        },
-      },
+      include: { post: true },
     });
 
-    if (!comment) {
-      throw new AppError('Comment not found', 404);
-    }
-
+    if (!comment) throw new AppError('Comment not found', 404);
     // User can delete own comment, or facilitator can delete any comment
     if (comment.authorId !== userId) {
-      const membership = await prisma.membership.findUnique({
-        where: {
-          userId_groupId: {
-            userId,
-            groupId: comment.post.groupId,
-          },
-        },
-      });
+      const post = comment.post;
 
-      if (
-        !membership ||
-        (membership.role !== 'FACILITATOR' && membership.role !== 'ADMIN')
-      ) {
-        throw new AppError('Access denied', 403);
+      if (post.groupId && post.visibility === 'GROUP') {
+        const membership = await prisma.membership.findUnique({
+          where: {
+            userId_groupId: {
+              userId,
+              groupId: post.groupId,
+            },
+          },
+        });
+
+        if (
+          !membership ||
+          (membership.role !== 'FACILITATOR' &&
+            membership.role !== 'ADMIN')
+        ) {
+          throw new AppError('Access denied', 403);
+        }
       }
     }
 
-    await prisma.comment.update({
+    return prisma.comment.update({
       where: { id: commentId },
       data: {
         isDeleted: true,
         deletedAt: new Date(),
       },
     });
+  }
 
-    return { message: 'Comment deleted successfully' };
+  async likePost(postId: string, userId: string) {
+    const post = await prisma.post.findUnique({
+      where: { id: postId },
+    });
+
+    if (!post) throw new AppError('Post not found', 404);
+
+    if (post.groupId && post.visibility === 'GROUP') {
+      const membership = await prisma.membership.findUnique({
+        where: {
+          userId_groupId: {
+            userId,
+            groupId: post.groupId,
+          },
+        },
+      });
+
+      if (!membership || membership.status !== MembershipStatus.ACTIVE) {
+        throw new AppError('Access denied', 403);
+      }
+    }
+
+    const existingLike = await prisma.like.findUnique({
+      where: {
+        userId_postId: {
+          userId,
+          postId,
+        },
+      },
+    });
+
+    if (existingLike) {
+      await prisma.like.delete({
+        where: {
+          userId_postId: {
+            userId,
+            postId,
+          },
+        },
+      });
+
+      return { liked: false };
+    }
+
+    const like = await prisma.like.create({
+      data: { userId, postId },
+    });
+
+    return { liked: true, data: like };
   }
 }
