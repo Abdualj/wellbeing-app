@@ -8,9 +8,6 @@ import { auditLog } from '../middleware/auditLog';
 
 const router = Router();
 
-// All routes require authentication
-router.use(authenticate);
-
 /**
  * @swagger
  * /api/v1/posts/public-feed:
@@ -21,6 +18,10 @@ router.use(authenticate);
  *       - bearerAuth: []
  */
 router.get('/public-feed', postController.getPublicFeed);
+
+// All routes except public feed require authentication
+router.use(authenticate);
+
 
 /**
  * @swagger

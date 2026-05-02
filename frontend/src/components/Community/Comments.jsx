@@ -1,10 +1,13 @@
 import { useState } from 'react';
 import { MoreHorizontal } from 'lucide-react';
+import TimeAgo from 'react-timeago';
 
+//kommentti Inputit
 const CommentInput = ({ postId, onSubmit, placeholder = "Add a comment..." }) => {
   const [text, setText] = useState('');
   const [loading, setLoading] = useState(false);
 
+  //lähetetään kommentti jos ei tyhjä
   const handleSubmit = async () => {
     if (!text.trim()) return;
     
@@ -36,6 +39,7 @@ const CommentInput = ({ postId, onSubmit, placeholder = "Add a comment..." }) =>
   );
 };
 
+//yksittäisen kommentin näkymä
 const CommentDisplay = ({ 
   comment, 
   postId,
@@ -46,34 +50,18 @@ const CommentDisplay = ({
   const [showReplyForm, setShowReplyForm] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
 
+  //kommentin vastaus
   const handleReply = async (text) => {
     await onAddReply(postId, text, comment.id);
     setShowReplyForm(false);
   };
 
+  //kommentin poisto
   const handleDelete = async () => {
     await onDelete(comment.id);
     setShowMenu(false);
   };
 
-  const formatTimestamp = (date) => {
-    const now = new Date();
-    const commentDate = new Date(date);
-    const diffMs = now - commentDate;
-    const diffMins = Math.floor(diffMs / 60000);
-    const diffHours = Math.floor(diffMs / 3600000);
-    const diffDays = Math.floor(diffMs / 86400000);
-
-    if (diffMins < 1) return 'just now';
-    if (diffHours < 1) return `${diffMins}m ago`;
-    if (diffHours < 24) return `${diffHours}h ago`;
-    
-    return commentDate.toLocaleTimeString('en-US', {
-      hour: '2-digit',
-      minute: '2-digit',
-      hour12: false
-    });
-  };
 
   if (!comment || !comment.author) {
     return null;
@@ -82,20 +70,20 @@ const CommentDisplay = ({
   const isAuthor = user?.id === comment.author.id;
 
   return (
-    <div className="mt-3 pb-3 border-b border-gray-100">
-      <div className="flex items-start justify-between">
-        <div className="flex items-start gap-3 flex-1">
+    <div className="px-4 py-2 flex gap-3 border-b border-neutral-200">
+        <div className="flex-shrink-0">
           {comment.author?.avatar ? (
             <img
               src={comment.author.avatar}
               alt=""
-              className="w-8 h-8 rounded-full object-cover flex-shrink-0"
+              className="w-10 h-10 rounded-full object-cover"
             />
           ) : (
-            <div className="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center text-sm font-medium text-gray-600 flex-shrink-0">
+            <div className="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center text-sm font-medium text-gray-600">
               {comment.author?.firstName?.[0] || 'U'}
-            </div>
+            </div>  
           )}
+        </div>
 
           <div className="flex-1">
             <div className="flex items-center gap-1 mb-1">
@@ -104,7 +92,7 @@ const CommentDisplay = ({
               </span>
               <span className="text-gray-400 text-xs">·</span>
               <span className="text-gray-400 text-xs">
-                {formatTimestamp(comment.createdAt)}
+                <TimeAgo date={comment.createdAt} />
               </span>
             </div>
 
@@ -127,7 +115,6 @@ const CommentDisplay = ({
               </div>
             )}
           </div>
-        </div>
 
         {isAuthor && (
           <div className="relative">
@@ -149,7 +136,6 @@ const CommentDisplay = ({
             )}
           </div>
         )}
-      </div>
     </div>
   );
 };
