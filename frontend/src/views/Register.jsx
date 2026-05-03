@@ -77,12 +77,8 @@ const Register = () => {
 
       console.log('[Register] Sending request with payload:', { ...payload, password: '[REDACTED]' });
 
-<<<<<<< HEAD
-      const res = await fetch('/api/v1/auth/register', {
-=======
       //lähetään tiedot backendille
-      const res = await fetch('http://localhost:3000/api/v1/auth/register', {
->>>>>>> ad4b764a6940aa967e5cdbe1558e3551cbe4f42a
+      const res = await fetch('/api/v1/auth/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)

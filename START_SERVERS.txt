@@ -1,0 +1,85 @@
+
+╔══════════════════════════════════════════════════════════════╗
+║                                                              ║
+║   🚀 Start Your Development Servers                         ║
+║                                                              ║
+╚══════════════════════════════════════════════════════════════╝
+
+📋 OPTION 1: Using the Start Script (Recommended)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Open a terminal and run:
+
+    cd /Users/abdulaljubury/hybrid_applications/wellbeing-app
+    ./start-dev.sh
+
+This will:
+  ✅ Clean up any existing processes
+  ✅ Start backend on port 3000
+  ✅ Start frontend on port 5174
+  ✅ Show you the logs
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+📋 OPTION 2: Manual Start (Two Terminals)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Terminal 1 - Backend:
+    cd /Users/abdulaljubury/hybrid_applications/wellbeing-app
+    npm run dev
+
+Terminal 2 - Frontend:
+    cd /Users/abdulaljubury/hybrid_applications/wellbeing-app/frontend
+    npm run dev
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+📋 OPTION 3: Background Processes
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Run these commands in your terminal:
+
+# Start Backend
+cd /Users/abdulaljubury/hybrid_applications/wellbeing-app
+npm run dev > backend.log 2>&1 &
+echo "Backend PID: $!"
+
+# Start Frontend
+cd /Users/abdulaljubury/hybrid_applications/wellbeing-app/frontend
+npm run dev > ../frontend.log 2>&1 &
+echo "Frontend PID: $!"
+
+# View logs
+tail -f ../backend.log ../frontend.log
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🌐 Once Started:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Backend API:  http://localhost:3000
+Frontend App: http://localhost:5174
+
+Health Check: curl http://localhost:3000/api/v1/health
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🛑 To Stop Servers:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+# Stop all node processes
+pkill -f "ts-node\|node.*dev"
+
+# Or find and kill specific PIDs
+lsof -ti:3000 | xargs kill -9
+lsof -ti:5174 | xargs kill -9
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+✨ Your app is ready to run with all the fixes applied!
+
+   ✅ Groups appear immediately after joining
+   ✅ PWA features enabled
+   ✅ Ready for deployment
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━

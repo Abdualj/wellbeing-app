@@ -7,12 +7,9 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-<<<<<<< HEAD
     "generate-icons": "node generate-icons.js",
-    "prebuild": "npm run generate-icons"
-=======
+    "prebuild": "npm run generate-icons",
     "test": "jest"
->>>>>>> ad4b764a6940aa967e5cdbe1558e3551cbe4f42a
   },
   "dependencies": {
     "@heroui/react": "^2.8.10",
@@ -21,12 +18,9 @@
     "lucide-react": "^0.577.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-<<<<<<< HEAD
     "react-hook-form": "^7.75.0",
-=======
-    "react-hook-form": "^7.74.0",
->>>>>>> ad4b764a6940aa967e5cdbe1558e3551cbe4f42a
     "react-router-dom": "^7.13.0",
+    "react-timeago": "^8.3.0",
     "socket.io-client": "^4.8.3",
     "tailwindcss": "^4.2.0"
   },
@@ -39,17 +33,13 @@
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^4.2.1",
-<<<<<<< HEAD
-    "sharp": "^0.34.5",
-    "vite": "^5.1.0",
-    "vite-plugin-pwa": "^1.2.0",
-    "workbox-window": "^7.4.0"
-=======
     "babel-jest": "^30.3.0",
     "jest": "^30.3.0",
     "jest-environment-jsdom": "^30.3.0",
+    "sharp": "^0.34.5",
     "supertest": "^7.2.2",
-    "vite": "^5.1.0"
->>>>>>> ad4b764a6940aa967e5cdbe1558e3551cbe4f42a
+    "vite": "^5.1.0",
+    "vite-plugin-pwa": "^1.2.0",
+    "workbox-window": "^7.4.0"
   }
 }
