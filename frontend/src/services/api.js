@@ -1,5 +1,5 @@
 // API Service for Wellbeing App
-const API_BASE_URL = '/api/v1';
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
 
 // Helper function to get auth headers
 const getAuthHeaders = () => {
@@ -41,7 +41,7 @@ export const groupsAPI = {
     if (params.page) queryParams.append('page', params.page);
     if (params.limit) queryParams.append('limit', params.limit);
     
-    const url = `${API_BASE_URL}/groups${queryParams.toString() ? '?' + queryParams.toString() : ''}`;
+    const url = `${API_BASE_URL}/api/v1/groups${queryParams.toString() ? '?' + queryParams.toString() : ''}`;
     
     const response = await fetch(url, {
       method: 'GET',
@@ -53,7 +53,7 @@ export const groupsAPI = {
 
   // Get a single group by ID
   getById: async (groupId) => {
-    const response = await fetch(`${API_BASE_URL}/groups/${groupId}`, {
+    const response = await fetch(`${API_BASE_URL}/api/v1/groups/${groupId}`, {
       method: 'GET',
       headers: getAuthHeaders(),
     });
@@ -63,7 +63,7 @@ export const groupsAPI = {
 
   // Create a new group
   create: async (groupData) => {
-    const response = await fetch(`${API_BASE_URL}/groups`, {
+    const response = await fetch(`${API_BASE_URL}/api/v1/groups`, {
       method: 'POST',
       headers: getAuthHeaders(),
       body: JSON.stringify(groupData),
@@ -74,7 +74,7 @@ export const groupsAPI = {
 
   // Update a group
   update: async (groupId, groupData) => {
-    const response = await fetch(`${API_BASE_URL}/groups/${groupId}`, {
+    const response = await fetch(`${API_BASE_URL}/api/v1/groups/${groupId}`, {
       method: 'PUT',
       headers: getAuthHeaders(),
       body: JSON.stringify(groupData),
@@ -85,7 +85,7 @@ export const groupsAPI = {
 
   // Delete a group
   delete: async (groupId) => {
-    const response = await fetch(`${API_BASE_URL}/groups/${groupId}`, {
+    const response = await fetch(`${API_BASE_URL}/api/v1/groups/${groupId}`, {
       method: 'DELETE',
       headers: getAuthHeaders(),
     });
@@ -95,7 +95,7 @@ export const groupsAPI = {
 
   // Join a group
   join: async (groupId) => {
-    const response = await fetch(`${API_BASE_URL}/groups/${groupId}/join`, {
+    const response = await fetch(`${API_BASE_URL}/api/v1/groups/${groupId}/join`, {
       method: 'POST',
       headers: getAuthHeaders(),
     });
@@ -105,7 +105,7 @@ export const groupsAPI = {
 
   // Leave a group
   leave: async (groupId) => {
-    const response = await fetch(`${API_BASE_URL}/groups/${groupId}/leave`, {
+    const response = await fetch(`${API_BASE_URL}/api/v1/groups/${groupId}/leave`, {
       method: 'POST',
       headers: getAuthHeaders(),
     });
@@ -115,7 +115,7 @@ export const groupsAPI = {
 
   // Get group members
   getMembers: async (groupId) => {
-    const response = await fetch(`${API_BASE_URL}/groups/${groupId}/members`, {
+    const response = await fetch(`${API_BASE_URL}/api/v1/groups/${groupId}/members`, {
       method: 'GET',
       headers: getAuthHeaders(),
     });
@@ -132,7 +132,7 @@ export const postsAPI = {
     if (params.page) queryParams.append('page', params.page);
     if (params.limit) queryParams.append('limit', params.limit);
     
-    const url = `${API_BASE_URL}/posts${queryParams.toString() ? '?' + queryParams.toString() : ''}`;
+    const url = `${API_BASE_URL}/api/v1/posts${queryParams.toString() ? '?' + queryParams.toString() : ''}`;
     
     const response = await fetch(url, {
       method: 'GET',
@@ -143,7 +143,7 @@ export const postsAPI = {
   },
 
   create: async (postData) => {
-    const response = await fetch(`${API_BASE_URL}/posts`, {
+    const response = await fetch(`${API_BASE_URL}/api/v1/posts`, {
       method: 'POST',
       headers: getAuthHeaders(),
       body: JSON.stringify(postData),
@@ -153,7 +153,7 @@ export const postsAPI = {
   },
 
   delete: async (postId) => {
-    const response = await fetch(`${API_BASE_URL}/posts/${postId}`, {
+    const response = await fetch(`${API_BASE_URL}/api/v1/posts/${postId}`, {
       method: 'DELETE',
       headers: getAuthHeaders(),
     });
@@ -169,7 +169,7 @@ export const eventsAPI = {
     if (params.groupId) queryParams.append('groupId', params.groupId);
     if (params.upcoming) queryParams.append('upcoming', params.upcoming);
     
-    const url = `${API_BASE_URL}/events${queryParams.toString() ? '?' + queryParams.toString() : ''}`;
+    const url = `${API_BASE_URL}/api/v1/events${queryParams.toString() ? '?' + queryParams.toString() : ''}`;
     
     const response = await fetch(url, {
       method: 'GET',
@@ -180,7 +180,7 @@ export const eventsAPI = {
   },
 
   create: async (eventData) => {
-    const response = await fetch(`${API_BASE_URL}/events`, {
+    const response = await fetch(`${API_BASE_URL}/api/v1/events`, {
       method: 'POST',
       headers: getAuthHeaders(),
       body: JSON.stringify(eventData),
@@ -190,7 +190,7 @@ export const eventsAPI = {
   },
 
   rsvp: async (eventId, status) => {
-    const response = await fetch(`${API_BASE_URL}/events/${eventId}/rsvp`, {
+    const response = await fetch(`${API_BASE_URL}/api/v1/events/${eventId}/rsvp`, {
       method: 'POST',
       headers: getAuthHeaders(),
       body: JSON.stringify({ status }),
@@ -203,7 +203,7 @@ export const eventsAPI = {
 // Auth API
 export const authAPI = {
   login: async (credentials) => {
-    const response = await fetch(`${API_BASE_URL}/auth/login`, {
+    const response = await fetch(`${API_BASE_URL}/api/v1/auth/login`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(credentials),
@@ -213,7 +213,7 @@ export const authAPI = {
   },
 
   register: async (userData) => {
-    const response = await fetch(`${API_BASE_URL}/auth/register`, {
+    const response = await fetch(`${API_BASE_URL}/api/v1/auth/register`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(userData),
@@ -231,7 +231,7 @@ export const authAPI = {
 // Users API
 export const usersAPI = {
   getProfile: async () => {
-    const response = await fetch(`${API_BASE_URL}/users/profile`, {
+    const response = await fetch(`${API_BASE_URL}/api/v1/users/profile`, {
       method: 'GET',
       headers: getAuthHeaders(),
     });
@@ -240,7 +240,7 @@ export const usersAPI = {
   },
 
   updateProfile: async (userData) => {
-    const response = await fetch(`${API_BASE_URL}/users/profile`, {
+    const response = await fetch(`${API_BASE_URL}/api/v1/users/profile`, {
       method: 'PUT',
       headers: getAuthHeaders(),
       body: JSON.stringify(userData),
@@ -252,7 +252,7 @@ export const usersAPI = {
   getUserGroups: async () => {
     // Add timestamp to prevent caching
     const timestamp = new Date().getTime();
-    const response = await fetch(`${API_BASE_URL}/users/groups?_t=${timestamp}`, {
+    const response = await fetch(`${API_BASE_URL}/api/v1/users/groups?_t=${timestamp}`, {
       method: 'GET',
       headers: getAuthHeaders(),
       cache: 'no-store', // Disable caching
@@ -262,7 +262,7 @@ export const usersAPI = {
   },
 
   getUserStats: async () => {
-    const response = await fetch(`${API_BASE_URL}/users/stats`, {
+    const response = await fetch(`${API_BASE_URL}/api/v1/users/stats`, {
       method: 'GET',
       headers: getAuthHeaders(),
     });

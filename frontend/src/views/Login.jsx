@@ -25,7 +25,8 @@ const Login = () => {
 
     try {
       //lähetään tiedot backendille
-      const res = await fetch('/api/v1/auth/login', {
+      const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+      const res = await fetch(`${API_URL}/api/v1/auth/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password })
