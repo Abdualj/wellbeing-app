@@ -4,6 +4,7 @@ import { useState, useEffect} from 'react';
 import TimeAgo from 'react-timeago';
 import { CommentInput, CommentDisplay } from '../components/Community/Comments';
 import Post from '../components/Community/Post';
+import { fileToBase64 } from '../utils/mediaCompression';
 
 const Community = () => {
   const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
@@ -86,20 +87,22 @@ const Community = () => {
         try {
           if (data.imageFile) {
             console.log('Converting image to base64...');
-            const imageBase64 = await fileToBase64(data.imageFile);
+            // Allow up to 50MB for compressed images
+            const imageBase64 = await fileToBase64(data.imageFile, 50);
             attachments.push(imageBase64);
             console.log('Image converted successfully');
           }
           
           if (data.videoFile) {
             console.log('Converting video to base64...');
-            const videoBase64 = await fileToBase64(data.videoFile);
+            // Allow up to 50MB for videos
+            const videoBase64 = await fileToBase64(data.videoFile, 50);
             attachments.push(videoBase64);
             console.log('Video converted successfully');
           }
         } catch (fileError) {
           console.error('File conversion error:', fileError);
-          alert('Failed to process file. File might be too large.');
+          alert(fileError.message || 'Failed to process file. File might be too large.');
           return;
         }
 
@@ -149,15 +152,6 @@ const Community = () => {
       }
   };
 
-  // Helper function to convert file to base64
-  const fileToBase64 = (file) => {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.readAsDataURL(file);
-      reader.onload = () => resolve(reader.result);
-      reader.onerror = (error) => reject(error);
-    });
-  };
   //Käsittelee tykkäykset
   const handleLikePost = async (postId) => {
     try {

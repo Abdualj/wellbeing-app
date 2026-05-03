@@ -3,6 +3,7 @@ import { useForm } from 'react-hook-form';
 import { useState, useRef } from 'react';
 import EmojiPicker from 'emoji-picker-react';
 import React from 'react';
+import { compressImage, validateVideo, formatFileSize } from '../../utils/mediaCompression';
 
 const ShareModal = ({ isOpen, onClose, user, onSubmitPost, groups = [] }) => {
   const {
@@ -22,6 +23,7 @@ const ShareModal = ({ isOpen, onClose, user, onSubmitPost, groups = [] }) => {
   const [videoFile, setVideoFile] = useState(null);
   const [emojiPickerOpen, setEmojiPickerOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState('');
 
   //tiedosto inputit
   const imageInputRef = useRef(null);
@@ -63,32 +65,60 @@ const ShareModal = ({ isOpen, onClose, user, onSubmitPost, groups = [] }) => {
   };
 
   //kuvan lataus
-  const handleImageUpload = (e) => {
+  const handleImageUpload = async (e) => {
     const file = e.target.files[0];
-    if (file) {
-      // Check file size (max 5MB)
-      const maxSize = 5 * 1024 * 1024; // 5MB in bytes
-      if (file.size > maxSize) {
-        alert('Image file is too large. Maximum size is 5MB.');
-        return;
+    if (!file) return;
+
+    try {
+      setUploadProgress('Compressing image...');
+      
+      // Compress image before upload
+      const compressedFile = await compressImage(file, 1920, 1080, 0.8);
+      
+      console.log(`Original size: ${formatFileSize(file.size)}`);
+      console.log(`Compressed size: ${formatFileSize(compressedFile.size)}`);
+      
+      setImage(URL.createObjectURL(compressedFile));
+      setImageFile(compressedFile);
+      setUploadProgress('');
+      
+      // Show success message if significant compression
+      if (file.size > compressedFile.size * 1.5) {
+        const savings = ((1 - compressedFile.size / file.size) * 100).toFixed(0);
+        console.log(`Image compressed by ${savings}%`);
       }
-      setImage(URL.createObjectURL(file));
-      setImageFile(file);
+    } catch (error) {
+      console.error('Image compression error:', error);
+      alert(error.message || 'Failed to process image');
+      setUploadProgress('');
     }
   };
 
   //videon lataus
-  const handleVideoUpload = (e) => {
+  const handleVideoUpload = async (e) => {
     const file = e.target.files[0];
-    if (file) {
-      // Check file size (max 10MB for video)
-      const maxSize = 10 * 1024 * 1024; // 10MB in bytes
-      if (file.size > maxSize) {
-        alert('Video file is too large. Maximum size is 10MB.');
-        return;
-      }
+    if (!file) return;
+
+    try {
+      setUploadProgress('Validating video...');
+      
+      // Validate video (max 50MB, 2 minutes)
+      await validateVideo(file, 50, 120);
+      
+      console.log(`Video size: ${formatFileSize(file.size)}`);
+      
       setVideo(URL.createObjectURL(file));
       setVideoFile(file);
+      setUploadProgress('');
+      
+      if (file.size > 20 * 1024 * 1024) {
+        alert('Large video detected. Upload may take a moment.');
+      }
+    } catch (error) {
+      console.error('Video validation error:', error);
+      alert(error.message || 'Failed to process video');
+      setUploadProgress('');
+      e.target.value = ''; // Reset input
     }
   };
 
@@ -152,6 +182,13 @@ const ShareModal = ({ isOpen, onClose, user, onSubmitPost, groups = [] }) => {
 
           {errors.content && (
             <p className="text-red-500 text-sm">{errors.content.message}</p>
+          )}
+
+          {uploadProgress && (
+            <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 flex items-center gap-2">
+              <div className="inline-block w-4 h-4 border-2 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+              <span className="text-sm text-blue-700">{uploadProgress}</span>
+            </div>
           )}
 
           {image && <img src={image} alt="" className="w-full rounded-md max-h-48 object-cover" />}
