@@ -3,6 +3,7 @@ import { useState } from 'react';
 
 const EditModal = ({ isOpen, setEdit, refetch }) => {
   if (!isOpen) return null;
+  const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
 
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
@@ -24,7 +25,7 @@ const EditModal = ({ isOpen, setEdit, refetch }) => {
   const save = async () => {
     try {
       const token = localStorage.getItem('token');
-      const res = await fetch('http://localhost:3000/api/v1/users/profile', {
+      const res = await fetch(`${API_URL}/api/v1/users/profile`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

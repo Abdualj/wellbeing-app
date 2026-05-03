@@ -6,6 +6,7 @@ import { useApp } from '../../context/AppContext';
 const ProfileCard = () => {
     const [isEdit, setEdit] = useState(false)
     const { user, groups = [], refetchProfile } = useApp();
+    const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
 
 
   const uploadPfp= async (file) => {
@@ -15,7 +16,7 @@ const ProfileCard = () => {
         formData.append('avatar', file)
 
         const token = localStorage.getItem('token');
-        const res = await fetch('http://localhost:3000/api/v1/users/profile', {
+        const res = await fetch(`${API_URL}/api/v1/users/profile`, {
             method: 'PUT',
             headers: {
             'Authorization': `Bearer ${token}`

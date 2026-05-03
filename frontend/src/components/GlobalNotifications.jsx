@@ -6,6 +6,7 @@ import { useLocation } from 'react-router-dom';
 const GlobalNotifications = () => {
   const { groups, sendNotification } = useApp();
   const location = useLocation();
+  const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
 
   useEffect(() => {
     if (!groups || groups.length === 0) return;
@@ -14,7 +15,7 @@ const GlobalNotifications = () => {
     if (!token) return;
 
     // Connect to WebSocket for all user's groups
-    const socket = io('http://localhost:3000', {
+    const socket = io(API_URL, {
       auth: { token },
       transports: ['websocket', 'polling'],
     });

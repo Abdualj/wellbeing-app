@@ -6,6 +6,7 @@ import { CommentInput, CommentDisplay } from '../components/Community/Comments';
 import Post from '../components/Community/Post';
 
 const Community = () => {
+  const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
   const [showShare, setShowShare] = useState(false);
   const [activeTab, setActiveTab] = useState('public');
   const [openPostMenu, setOpenPostMenu] = useState(null);
@@ -25,8 +26,8 @@ const Community = () => {
       // Valitaan endpoint riippuen feedistä (AI avustettu)
       const endpoint =
         activeTab === 'public'
-          ? 'http://localhost:3000/api/v1/posts/public-feed'
-          : 'http://localhost:3000/api/v1/posts/group-feed';
+          ? `${API_URL}/api/v1/posts/public-feed`
+          : `${API_URL}/api/v1/posts/group-feed`;
 
       const token = getToken();
 
@@ -80,8 +81,8 @@ const Community = () => {
         }
         // Endpointin valinta
         const endpoint = data.group && data.visibility === 'GROUP'
-          ? `http://localhost:3000/api/v1/posts/groups/${data.group}/posts`
-          : `http://localhost:3000/api/v1/posts/public`;
+          ? `${API_URL}/api/v1/posts/groups/${data.group}/posts`
+          : `${API_URL}/api/v1/posts/public`;
 
         const postData = {
           content: data.content,
@@ -125,7 +126,7 @@ const Community = () => {
       }));
 
       const res = await fetch(
-        `http://localhost:3000/api/v1/posts/${postId}/like`,
+        `${API_URL}/api/v1/posts/${postId}/like`,
         {
           method: 'POST',
           headers: {
@@ -166,7 +167,7 @@ const Community = () => {
       }
 
       const res = await fetch(
-        `http://localhost:3000/api/v1/posts/${postId}`,
+        `${API_URL}/api/v1/posts/${postId}`,
         {
           method: 'DELETE',
           headers: {
@@ -194,7 +195,7 @@ const Community = () => {
   const handleAddComment = async (postId, text, parentId = null) => {
     const token = getToken();
     if (!token) return;
-    await fetch(`http://localhost:3000/api/v1/posts/${postId}/comments`, {
+    await fetch(`${API_URL}/api/v1/posts/${postId}/comments`, {
       method: 'POST',
       headers: {
         Authorization: `Bearer ${token}`,
@@ -210,7 +211,7 @@ const Community = () => {
     if (!token) return;
 
     try {
-      const res = await fetch(`http://localhost:3000/api/v1/posts/comments/${commentId}`, {
+      const res = await fetch(`${API_URL}/api/v1/posts/comments/${commentId}`, {
         method: 'DELETE',
         headers: {
           Authorization: `Bearer ${token}`,
