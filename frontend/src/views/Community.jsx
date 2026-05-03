@@ -79,6 +79,20 @@ const Community = () => {
           alert('Please select a group for community posts');
           return;
         }
+
+        // Convert files to base64
+        const attachments = [];
+        
+        if (data.imageFile) {
+          const imageBase64 = await fileToBase64(data.imageFile);
+          attachments.push(imageBase64);
+        }
+        
+        if (data.videoFile) {
+          const videoBase64 = await fileToBase64(data.videoFile);
+          attachments.push(videoBase64);
+        }
+
         // Endpointin valinta
         const endpoint = data.group && data.visibility === 'GROUP'
           ? `${API_URL}/api/v1/posts/groups/${data.group}/posts`
@@ -87,6 +101,7 @@ const Community = () => {
         const postData = {
           content: data.content,
           visibility: data.visibility,
+          attachments: attachments.length > 0 ? attachments : undefined,
         };
         if (data.group) postData.groupId = data.group;
 
@@ -110,6 +125,16 @@ const Community = () => {
         console.error('Error creating post:', error);
         alert(`Failed to create post: ${error.message}`);
       }
+  };
+
+  // Helper function to convert file to base64
+  const fileToBase64 = (file) => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => resolve(reader.result);
+      reader.onerror = (error) => reject(error);
+    });
   };
   //Käsittelee tykkäykset
   const handleLikePost = async (postId) => {
