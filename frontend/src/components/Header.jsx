@@ -14,7 +14,7 @@ const Header = () => {
         <div className="flex justify-between items-center py-4">
           <a href="/" className="flex items-center gap-2 sm:gap-3">
             <img 
-              src="/logo/wellspring-logo-2.png" 
+              src="/wellspring-logo-2.png" 
               alt="Wellspring Logo" 
               className="h-16 sm:h-20 md:h-24 w-auto"
             />

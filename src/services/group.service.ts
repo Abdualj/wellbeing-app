@@ -177,10 +177,8 @@ export class GroupService {
       throw new AppError('You are already a member of this group', 409);
     }
 
-    // Determine status based on group settings
-    const status = group.requireApproval 
-      ? MembershipStatus.PENDING 
-      : MembershipStatus.ACTIVE;
+    // Always set status to ACTIVE (no approval required)
+    const status = MembershipStatus.ACTIVE;
 
     // Create or update membership
     const membership = existingMembership
@@ -193,7 +191,7 @@ export class GroupService {
           },
           data: {
             status,
-            ...(status === MembershipStatus.ACTIVE && { joinedAt: new Date() }),
+            joinedAt: new Date(),
           },
         })
       : await prisma.membership.create({
@@ -202,15 +200,13 @@ export class GroupService {
             groupId,
             status,
             role: MemberRole.MEMBER,
-            ...(status === MembershipStatus.ACTIVE && { joinedAt: new Date() }),
+            joinedAt: new Date(),
           },
         });
 
     return {
       ...membership,
-      message: status === MembershipStatus.PENDING 
-        ? 'Join request sent. Waiting for approval.' 
-        : 'Successfully joined the group!',
+      message: 'Successfully joined the group!',
     };
   }
 
