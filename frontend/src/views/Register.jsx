@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import React from 'react';
 
 const Register = () => {
   const [firstName, setFirstName] = useState('')
@@ -10,6 +11,7 @@ const Register = () => {
   const [error, setError] = useState('')
   const [dataProcessingConsent, setDataProcessingConsent] = useState(false)
 
+  //käsittelee input muutokset
   const handleInputChange = (e) => {
     const { name, value } = e.target
     if (name === 'firstname') setFirstName(value)
@@ -19,6 +21,7 @@ const Register = () => {
     if (name === 'confirmPassword') setConfirmPassword(value)
   }
 
+  //lomakkeen lähetys
   const handleSubmit = async (event) => {
     event.preventDefault()
     setError('')
@@ -26,7 +29,7 @@ const Register = () => {
     console.log('[Register] Starting registration...');
     console.log('[Register] Form data:', { firstName, lastName, email, dataProcessingConsent });
 
-    // Validation
+    // Validointi
     if (!firstName.trim()) {
       setError('First name is required');
       return;
@@ -74,7 +77,12 @@ const Register = () => {
 
       console.log('[Register] Sending request with payload:', { ...payload, password: '[REDACTED]' });
 
+<<<<<<< HEAD
       const res = await fetch('/api/v1/auth/register', {
+=======
+      //lähetään tiedot backendille
+      const res = await fetch('http://localhost:3000/api/v1/auth/register', {
+>>>>>>> ad4b764a6940aa967e5cdbe1558e3551cbe4f42a
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)
@@ -99,7 +107,7 @@ const Register = () => {
       }
       
       console.log('[Register] Redirecting to profile...');
-      window.location.href = '/profile'
+      window.location.assign('/profile');
     } catch (err) {
       console.error('[Register] Network error:', err);
       setError('Network error: ' + err.message)
@@ -124,8 +132,9 @@ const Register = () => {
 
         <form onSubmit={handleSubmit} className="w-full space-y-5">
           <div>
-            <label className="block mb-2 font-medium text-sage-900 text-sm">First Name</label>
+            <label htmlFor="firstname" className="block mb-2 font-medium text-sage-900 text-sm">First Name</label>
             <input
+              id="firstname"
               name="firstname"
               type="text"
               value={firstName}
@@ -137,8 +146,9 @@ const Register = () => {
           </div>
 
           <div>
-            <label className="block mb-2 font-medium text-sage-900 text-sm">Last Name</label>
+            <label htmlFor="lastname" className="block mb-2 font-medium text-sage-900 text-sm">Last Name</label>
             <input
+              id="lastname"
               name="lastname"
               type="text"
               value={lastName}
@@ -150,8 +160,9 @@ const Register = () => {
           </div>
 
           <div>
-            <label className="block mb-2 font-medium text-sage-900 text-sm">Email</label>
+            <label htmlFor="email" className="block mb-2 font-medium text-sage-900 text-sm">Email</label>
             <input
+              id="email"
               name="email"
               type="email"
               value={email}
@@ -163,8 +174,9 @@ const Register = () => {
           </div>
 
           <div>
-            <label className="block mb-2 font-medium text-sage-900 text-sm">Password</label>
+            <label htmlFor="password"  className="block mb-2 font-medium text-sage-900 text-sm">Password</label>
             <input
+              id="password"
               name="password"
               type="password"
               value={password}
@@ -177,8 +189,9 @@ const Register = () => {
           </div>
 
           <div>
-            <label className="block mb-2 font-medium text-sage-900 text-sm">Confirm Password</label>
+            <label htmlFor="confirmPassword" className="block mb-2 font-medium text-sage-900 text-sm">Confirm Password</label>
             <input
+              id="confirmPassword"
               name="confirmPassword"
               type="password"
               value={confirmPassword}
@@ -191,12 +204,13 @@ const Register = () => {
 
           <div className="flex items-start gap-3 bg-white border border-sage-200 rounded-lg p-4">
             <input
+              id="dataProcessingConsent"
               type="checkbox"
               checked={dataProcessingConsent}
               onChange={(e) => setDataProcessingConsent(e.target.checked)}
               className="mt-1 w-4 h-4 accent-sage-600 cursor-pointer"
             />
-            <label className="text-xs text-gray-600 leading-relaxed cursor-pointer">
+            <label htmlFor ="dataProcessingConsent" className="text-xs text-gray-600 leading-relaxed cursor-pointer">
               I agree to the processing of my personal data
             </label>
           </div>

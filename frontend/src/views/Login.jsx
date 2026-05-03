@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import React from 'react';
 
 const Login = () => {
   const [email, setEmail] = useState('');
@@ -6,22 +7,29 @@ const Login = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
+  //käsittelee input muutokset
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     if (name === 'email') setEmail(value);
     if (name === 'password') setPassword(value);
   };
 
+  //lomakkeen lähetys
   const handleSubmit = async (event) => {
     event.preventDefault();
-
+    // Validointi
     if (!email.trim() || !password.trim()) return;
 
     setLoading(true);
     setError('');
 
     try {
+<<<<<<< HEAD
       const res = await fetch('/api/v1/auth/login', {
+=======
+      //lähetään tiedot backendille
+      const res = await fetch('http://localhost:3000/api/v1/auth/login', {
+>>>>>>> ad4b764a6940aa967e5cdbe1558e3551cbe4f42a
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password })
@@ -39,7 +47,7 @@ const Login = () => {
         localStorage.setItem('userId', data.data.user.id);
       }
       
-      window.location.href = '/profile';
+      window.location.assign('/profile');
     } catch (err) {
       setError('Network error');
     } finally {
@@ -63,8 +71,9 @@ const Login = () => {
 
         <form onSubmit={handleSubmit} className="w-full space-y-6">
           <div>
-            <label className="block mb-2 font-medium text-sage-900 text-sm">Email</label>
+            <label htmlFor="email" className="block mb-2 font-medium text-sage-900 text-sm">Email</label>
             <input
+              id="email"
               name="email"
               type="email"
               value={email}
@@ -76,8 +85,9 @@ const Login = () => {
           </div>
 
           <div>
-            <label className="block mb-2 font-medium text-sage-900 text-sm">Password</label>
+            <label htmlFor="password" className="block mb-2 font-medium text-sage-900 text-sm">Password</label>
             <input
+              id="password"
               name="password"
               type="password"
               value={password}

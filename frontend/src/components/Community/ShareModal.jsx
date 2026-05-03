@@ -2,6 +2,7 @@ import { X, Image as ImageIcon, Video, Smile } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { useState, useRef } from 'react';
 import EmojiPicker from 'emoji-picker-react';
+import React from 'react';
 
 const ShareModal = ({ isOpen, onClose, user, onSubmitPost, groups = [] }) => {
   const {
@@ -21,17 +22,19 @@ const ShareModal = ({ isOpen, onClose, user, onSubmitPost, groups = [] }) => {
   const [videoFile, setVideoFile] = useState(null);
   const [emojiPickerOpen, setEmojiPickerOpen] = useState(false);
 
+  //tiedosto inputit
   const imageInputRef = useRef(null);
   const videoInputRef = useRef(null);
 
   if (!isOpen) return null;
 
+  //julkaisun lähetys
   const handlePostSubmit = (data) => {
     if (visibility === 'GROUP' && !groupId) {
       alert('Please select a group for community posts');
       return;
     }
-
+    //lähetetään julkaisun tiedot community-sivulle
     onSubmitPost({
       content: data.content,
       group: groupId,
@@ -49,6 +52,7 @@ const ShareModal = ({ isOpen, onClose, user, onSubmitPost, groups = [] }) => {
     setVisibility('PUBLIC');
   };
 
+  //kuvan lataus
   const handleImageUpload = (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -57,6 +61,7 @@ const ShareModal = ({ isOpen, onClose, user, onSubmitPost, groups = [] }) => {
     }
   };
 
+  //videon lataus
   const handleVideoUpload = (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -68,7 +73,7 @@ const ShareModal = ({ isOpen, onClose, user, onSubmitPost, groups = [] }) => {
   const selectedGroupName = groups.find(g => g.id === groupId)?.name;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+    <div className="fixed inset-0 bg-black/20 backdrop-blur-sm z-50 flex items-center justify-center p-4">
       <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] flex flex-col">
         <div className="flex items-center justify-between p-6 border-b border-gray-200 flex-shrink-0">
           <h2 className="text-2xl font-bold text-sage-900">Share Your Journey</h2>
