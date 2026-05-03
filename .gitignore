@@ -31,9 +31,6 @@ coverage/
 .DS_Store
 Thumbs.db
 
-# Prisma
-prisma/migrations/
-
 # Misc
 *.tgz
 .cache/
