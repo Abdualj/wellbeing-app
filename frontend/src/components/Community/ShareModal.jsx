@@ -21,6 +21,7 @@ const ShareModal = ({ isOpen, onClose, user, onSubmitPost, groups = [] }) => {
   const [imageFile, setImageFile] = useState(null);
   const [videoFile, setVideoFile] = useState(null);
   const [emojiPickerOpen, setEmojiPickerOpen] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   //tiedosto inputit
   const imageInputRef = useRef(null);
@@ -29,33 +30,48 @@ const ShareModal = ({ isOpen, onClose, user, onSubmitPost, groups = [] }) => {
   if (!isOpen) return null;
 
   //julkaisun lähetys
-  const handlePostSubmit = (data) => {
+  const handlePostSubmit = async (data) => {
     if (visibility === 'GROUP' && !groupId) {
       alert('Please select a group for community posts');
       return;
     }
-    //lähetetään julkaisun tiedot community-sivulle
-    onSubmitPost({
-      content: data.content,
-      group: groupId,
-      visibility,
-      imageFile,
-      videoFile,
-    });
+    
+    setIsSubmitting(true);
+    
+    try {
+      //lähetetään julkaisun tiedot community-sivulle
+      await onSubmitPost({
+        content: data.content,
+        group: groupId,
+        visibility,
+        imageFile,
+        videoFile,
+      });
 
-    reset();
-    setImage(null);
-    setVideo(null);
-    setImageFile(null);
-    setVideoFile(null);
-    setGroupId('');
-    setVisibility('PUBLIC');
+      reset();
+      setImage(null);
+      setVideo(null);
+      setImageFile(null);
+      setVideoFile(null);
+      setGroupId('');
+      setVisibility('PUBLIC');
+    } catch (error) {
+      console.error('Submit error:', error);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   //kuvan lataus
   const handleImageUpload = (e) => {
     const file = e.target.files[0];
     if (file) {
+      // Check file size (max 5MB)
+      const maxSize = 5 * 1024 * 1024; // 5MB in bytes
+      if (file.size > maxSize) {
+        alert('Image file is too large. Maximum size is 5MB.');
+        return;
+      }
       setImage(URL.createObjectURL(file));
       setImageFile(file);
     }
@@ -65,6 +81,12 @@ const ShareModal = ({ isOpen, onClose, user, onSubmitPost, groups = [] }) => {
   const handleVideoUpload = (e) => {
     const file = e.target.files[0];
     if (file) {
+      // Check file size (max 10MB for video)
+      const maxSize = 10 * 1024 * 1024; // 10MB in bytes
+      if (file.size > maxSize) {
+        alert('Video file is too large. Maximum size is 10MB.');
+        return;
+      }
       setVideo(URL.createObjectURL(file));
       setVideoFile(file);
     }
@@ -205,12 +227,28 @@ const ShareModal = ({ isOpen, onClose, user, onSubmitPost, groups = [] }) => {
           )}
 
           <div className="flex justify-end gap-4 mt-auto pt-6 border-t border-gray-200 bg-gray-50 -m-6 p-6">
-            <button type="button" onClick={onClose} className="border border-gray-300 px-6 py-2 rounded-md hover:bg-gray-100 transition text-sm font-medium">
+            <button 
+              type="button" 
+              onClick={onClose} 
+              disabled={isSubmitting}
+              className="border border-gray-300 px-6 py-2 rounded-md hover:bg-gray-100 transition text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+            >
               Cancel
             </button>
 
-            <button type="submit" className="bg-sage-600 text-white px-6 py-2 rounded-md hover:bg-sage-700 transition text-sm font-medium">
-              Share
+            <button 
+              type="submit" 
+              disabled={isSubmitting}
+              className="bg-sage-600 text-white px-6 py-2 rounded-md hover:bg-sage-700 transition text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+            >
+              {isSubmitting ? (
+                <>
+                  <span className="inline-block w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
+                  Sharing...
+                </>
+              ) : (
+                'Share'
+              )}
             </button>
           </div>
         </form>

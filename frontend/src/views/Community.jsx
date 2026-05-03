@@ -83,14 +83,24 @@ const Community = () => {
         // Convert files to base64
         const attachments = [];
         
-        if (data.imageFile) {
-          const imageBase64 = await fileToBase64(data.imageFile);
-          attachments.push(imageBase64);
-        }
-        
-        if (data.videoFile) {
-          const videoBase64 = await fileToBase64(data.videoFile);
-          attachments.push(videoBase64);
+        try {
+          if (data.imageFile) {
+            console.log('Converting image to base64...');
+            const imageBase64 = await fileToBase64(data.imageFile);
+            attachments.push(imageBase64);
+            console.log('Image converted successfully');
+          }
+          
+          if (data.videoFile) {
+            console.log('Converting video to base64...');
+            const videoBase64 = await fileToBase64(data.videoFile);
+            attachments.push(videoBase64);
+            console.log('Video converted successfully');
+          }
+        } catch (fileError) {
+          console.error('File conversion error:', fileError);
+          alert('Failed to process file. File might be too large.');
+          return;
         }
 
         // Endpointin valinta
@@ -101,9 +111,17 @@ const Community = () => {
         const postData = {
           content: data.content,
           visibility: data.visibility,
-          attachments: attachments.length > 0 ? attachments : undefined,
         };
-        if (data.group) postData.groupId = data.group;
+        
+        if (attachments.length > 0) {
+          postData.attachments = attachments;
+        }
+        
+        if (data.group) {
+          postData.groupId = data.group;
+        }
+
+        console.log('Sending post data:', { ...postData, attachments: postData.attachments ? `[${postData.attachments.length} files]` : 'none' });
 
         const res = await fetch(endpoint, {
           method: 'POST',
@@ -116,8 +134,12 @@ const Community = () => {
 
         if (!res.ok) {
           const error = await res.json();
+          console.error('Post creation failed:', error);
           throw new Error(error.message || 'Failed to create post');
         }
+
+        const result = await res.json();
+        console.log('Post created successfully:', result);
 
         setShowShare(false);
         await fetchPost();
