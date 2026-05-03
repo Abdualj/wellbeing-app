@@ -241,25 +241,25 @@ const Community = () => {
 
   return (
     <div className="min-h-screen bg-[#fafafa]">
-      <div className="max-w-3xl mx-auto px-4 py-6">
+      <div className="max-w-3xl mx-auto px-3 sm:px-4 py-4 sm:py-6">
 
-        <div className="flex items-center justify-between mb-6">
-          <h1 className="text-3xl font-bold text-sage-900 mb-5">Community</h1>
+        <div className="flex items-center justify-between mb-4 sm:mb-6">
+          <h1 className="text-2xl sm:text-3xl font-bold text-sage-900">Community</h1>
           {user && (
             <button
               onClick={() => setShowShare(true)}
-              className="px-5 py-2 bg-sage-900 text-white rounded-full hover:bg-gray-800 transition text-sm font-medium shadow-sm hover:shadow-md"
+              className="px-3 sm:px-5 py-2 bg-sage-900 text-white rounded-full hover:bg-gray-800 transition text-xs sm:text-sm font-medium shadow-sm hover:shadow-md"
             >
               New post
             </button>
           )}
         </div>
 
-        <div className="mb-6">
-          <div className='border-border h-14 grid grid-cols-2 text-sage-900'>
+        <div className="mb-4 sm:mb-6">
+          <div className='border-border h-12 sm:h-14 grid grid-cols-2 text-sage-900'>
             <button
               onClick={() => setActiveTab('public')}
-              className="relative flex items-center justify-center font-semibold"
+              className="relative flex items-center justify-center font-semibold text-sm sm:text-base"
             >
               Public Feed
               {activeTab === 'public' && (
@@ -269,7 +269,7 @@ const Community = () => {
 
             <button
               onClick={() => setActiveTab('community')}
-              className="relative flex items-center justify-center font-semibold"
+              className="relative flex items-center justify-center font-semibold text-sm sm:text-base"
             >
               Group Feed
               {activeTab === 'community' && (

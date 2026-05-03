@@ -221,22 +221,22 @@ const Groups = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 py-8">
-      <div className="max-w-[1200px] mx-auto px-6">
+    <div className="min-h-screen bg-gray-100 py-4 sm:py-8">
+      <div className="max-w-[1200px] mx-auto px-3 sm:px-6">
         {/* Header */}
-        <div className="bg-white rounded-lg shadow p-6 mb-6">
-          <div className="flex items-center justify-between">
+        <div className="bg-white rounded-lg shadow p-4 sm:p-6 mb-4 sm:mb-6">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-0">
             <div>
-              <h1 className="text-3xl font-bold text-sage-900">Discover Groups</h1>
-              <p className="text-gray-500 mt-1">
+              <h1 className="text-2xl sm:text-3xl font-bold text-sage-900">Discover Groups</h1>
+              <p className="text-sm sm:text-base text-gray-500 mt-1">
                 {filteredGroups.length} {filteredGroups.length === 1 ? 'group' : 'groups'} available
               </p>
             </div>
             <button
               onClick={() => setShowCreateModal(true)}
-              className="flex items-center gap-2 text-white bg-sage-900 px-6 py-3 rounded-md hover:bg-sage-800 transition active:scale-95"
+              className="flex items-center gap-2 text-white bg-sage-900 px-4 sm:px-6 py-2.5 sm:py-3 rounded-md hover:bg-sage-800 transition active:scale-95 text-sm sm:text-base w-full sm:w-auto justify-center"
             >
-              <Plus className="w-5 h-5" />
+              <Plus className="w-4 h-4 sm:w-5 sm:h-5" />
               Create Group
             </button>
           </div>

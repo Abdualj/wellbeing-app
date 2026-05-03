@@ -66,7 +66,7 @@ const GroupCard = ({ group, isUserInGroup, status, onJoinGroup, isJoining }) => 
   return (
     <div className="bg-white rounded-lg shadow-sm overflow-hidden hover:shadow-md transition-shadow cursor-pointer group">
       {/* Image */}
-      <div className="relative h-48 overflow-hidden bg-gray-200">
+      <div className="relative h-40 sm:h-48 overflow-hidden bg-gray-200">
         <img
           src={group.image || 'https://via.placeholder.com/400x300?text=No+Image'}
           alt={group.name}
@@ -76,34 +76,34 @@ const GroupCard = ({ group, isUserInGroup, status, onJoinGroup, isJoining }) => 
           }}
         />
         {getStatusBadge() && (
-          <div className="absolute top-3 right-3">
+          <div className="absolute top-2 sm:top-3 right-2 sm:right-3">
             {getStatusBadge()}
           </div>
         )}
       </div>
 
       {/* Content */}
-      <div className="p-5">
-        <div className="mb-3">
-          <h3 className="text-lg font-bold text-sage-900 mb-1 line-clamp-1">{group.name}</h3>
+      <div className="p-3 sm:p-5">
+        <div className="mb-2 sm:mb-3">
+          <h3 className="text-base sm:text-lg font-bold text-sage-900 mb-1 line-clamp-1">{group.name}</h3>
           <span className="inline-block px-2 py-1 text-xs font-medium bg-sage-100 text-sage-700 rounded">
             {group.activity || group.category}
           </span>
         </div>
 
-        <p className="text-sm text-gray-600 mb-4 line-clamp-2 min-h-[40px]">
+        <p className="text-xs sm:text-sm text-gray-600 mb-3 sm:mb-4 line-clamp-2 min-h-[32px] sm:min-h-[40px]">
           {group.description}
         </p>
 
-        <div className="flex items-center justify-between text-sm text-gray-500 mb-4">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between text-xs sm:text-sm text-gray-500 mb-3 sm:mb-4 gap-2">
           <div className="flex items-center gap-1">
-            <Users className="w-4 h-4" />
+            <Users className="w-3 h-3 sm:w-4 sm:h-4" />
             <span>{group.memberCount || 0}/{group.capacity || 0} members</span>
           </div>
           {group.location && (
             <div className="flex items-center gap-1">
-              <MapPin className="w-4 h-4" />
-              <span className="truncate">{group.location}</span>
+              <MapPin className="w-3 h-3 sm:w-4 sm:h-4" />
+              <span className="truncate text-xs sm:text-sm">{group.location}</span>
             </div>
           )}
         </div>
@@ -116,7 +116,7 @@ const GroupCard = ({ group, isUserInGroup, status, onJoinGroup, isJoining }) => 
               onJoinGroup(group.id);
             }}
             disabled={isJoining}
-            className="w-full bg-sage-900 text-white py-2.5 rounded-md hover:bg-sage-800 transition active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed font-medium"
+            className="w-full bg-sage-900 text-white py-2 sm:py-2.5 rounded-md hover:bg-sage-800 transition active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed font-medium text-sm sm:text-base"
           >
             {isJoining ? 'Joining...' : 'Join Group'}
           </button>
@@ -129,9 +129,9 @@ const GroupCard = ({ group, isUserInGroup, status, onJoinGroup, isJoining }) => 
                 e.stopPropagation();
                 navigate(`/groups/${group.id}/chat`);
               }}
-              className="flex-1 bg-sage-600 text-white py-2.5 rounded-md hover:bg-sage-700 transition active:scale-95 font-medium flex items-center justify-center gap-2 relative"
+              className="flex-1 bg-sage-600 text-white py-2 sm:py-2.5 rounded-md hover:bg-sage-700 transition active:scale-95 font-medium flex items-center justify-center gap-2 relative text-sm sm:text-base"
             >
-              <MessageCircle className="w-4 h-4" />
+              <MessageCircle className="w-3 h-3 sm:w-4 sm:h-4" />
               Chat
               {unreadCount > 0 && (
                 <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
@@ -140,7 +140,7 @@ const GroupCard = ({ group, isUserInGroup, status, onJoinGroup, isJoining }) => 
               )}
             </button>
             <button
-              className="px-4 bg-gray-100 text-gray-700 py-2.5 rounded-md font-medium"
+              className="px-3 sm:px-4 bg-gray-100 text-gray-700 py-2 sm:py-2.5 rounded-md font-medium text-sm sm:text-base"
               title="Member"
             >
               ✓
@@ -150,7 +150,7 @@ const GroupCard = ({ group, isUserInGroup, status, onJoinGroup, isJoining }) => 
 
         {status === 'full' && !isUserInGroup && (
           <button
-            className="w-full bg-gray-100 text-gray-500 py-2.5 rounded-md cursor-not-allowed font-medium"
+            className="w-full bg-gray-100 text-gray-500 py-2 sm:py-2.5 rounded-md cursor-not-allowed font-medium text-sm sm:text-base"
             disabled
           >
             Group Full

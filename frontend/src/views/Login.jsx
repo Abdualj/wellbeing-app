@@ -53,11 +53,11 @@ const Login = () => {
   };
 
   return (
-    <section className="flex items-center justify-center min-h-screen bg-gradient-to-br from-sage-50 to-gray-50">
-      <div className="flex flex-col items-center w-full max-w-md px-4">
-        <div className="text-center mb-12">
-          <h1 className="text-5xl font-bold text-sage-900 whitespace-nowrap">Welcome to WellSpring</h1>
-          <p className="text-gray-600 mt-4">Continue your wellness journey</p>
+    <section className="flex items-center justify-center min-h-screen bg-gradient-to-br from-sage-50 to-gray-50 px-4">
+      <div className="flex flex-col items-center w-full max-w-md">
+        <div className="text-center mb-8 sm:mb-12">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-sage-900">Welcome to WellSpring</h1>
+          <p className="text-sm sm:text-base text-gray-600 mt-2 sm:mt-4">Continue your wellness journey</p>
         </div>
 
         {error && (
