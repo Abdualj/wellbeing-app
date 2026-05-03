@@ -32,9 +32,9 @@ const limiter = rateLimit({
 
 app.use('/api/', limiter);
 
-// Body parsing middleware - increased limit for base64 images
-app.use(express.json({ limit: '10mb' }));
-app.use(express.urlencoded({ extended: true, limit: '10mb' }));
+// Body parsing middleware - increased limit for base64 images and videos
+app.use(express.json({ limit: '50mb' }));
+app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 
 // Logging middleware
 if (config.env === 'development') {

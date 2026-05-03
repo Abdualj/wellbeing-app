@@ -2,12 +2,21 @@ import { Response } from 'express';
 import { AuthRequest } from '../middleware/auth';
 import { PostService } from '../services/post.service';
 import { asyncHandler } from '../middleware/errorHandler';
+import logger from '../config/logger';
 
 const postService = new PostService();
 
 export const createPost = asyncHandler(async (req: AuthRequest, res: Response) => {
   const userId = req.user!.id;
   const { groupId } = req.params;
+
+  // Log attachment info for debugging
+  if (req.body.attachments && req.body.attachments.length > 0) {
+    const attachmentSizes = req.body.attachments.map((att: string) => 
+      `${(att.length / 1024 / 1024).toFixed(2)}MB`
+    );
+    logger.info(`Creating post with ${req.body.attachments.length} attachments: ${attachmentSizes.join(', ')}`);
+  }
 
   const post = await postService.createPost(userId, groupId, req.body);
 
@@ -95,6 +104,14 @@ export const deleteComment = asyncHandler(async (req: AuthRequest, res: Response
 
 export const createPublicPost = asyncHandler(async (req: AuthRequest, res: Response) => {
   const userId = req.user!.id;
+
+  // Log attachment info for debugging
+  if (req.body.attachments && req.body.attachments.length > 0) {
+    const attachmentSizes = req.body.attachments.map((att: string) => 
+      `${(att.length / 1024 / 1024).toFixed(2)}MB`
+    );
+    logger.info(`Creating public post with ${req.body.attachments.length} attachments: ${attachmentSizes.join(', ')}`);
+  }
 
   // Create post with no groupId (public post)
   const post = await postService.createPost(userId, null, req.body);
