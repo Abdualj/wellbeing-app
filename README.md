@@ -1,59 +1,120 @@
-Wellbeing & Small-Group Community App – Backend
+Wellbeing & Small-Group Community App
 
-Overview
+Kuvakaappaukset:
+Login:
+![alt text](image.png)
 
-This project is a backend API for a wellbeing application that supports small, private groups.
-The goal is to reduce loneliness and stress by enabling calm, low-threshold social interaction.
-The backend was developed as part of a UX / User-Centered Design (UCD) course project.
+Register:
+![alt text](image-2.png)
 
-Purpose
-Support small closed groups (4–12 users)
-Ensure privacy and GDPR compliance
-Enable a calm user experience with minimal notifications
-Provide a secure and reliable API for frontend development
+Profile:
+![alt text](image-3.png)
 
-Target Group & Stakeholders
-Young adults and adults seeking social connection
-Group facilitators
-Developers
-Educational institution
+Groups:
+![alt text](image-4.png)
 
-Core Backend Features
-User registration and secure login (JWT)
-User profiles and privacy settings
-Small group creation and invitation-based membership
-Group-only posts and comments (no public feed)
-Event creation and RSVP handling
+Community:
+![alt text](image-5.png)
 
-Technology
-Node.js & TypeScript
-Express.js
-PostgreSQL + Prisma ORM
-JWT authentication
-Swagger / OpenAPI documentation
-Docker (development)
+Chat:
+![alt text](image-6.png)
+![alt text](image-7.png)
 
-Architecture
-The backend follows a layered architecture:
-Routes → Controllers → Services → Database
-This supports clean separation of concerns, easy testing, and agile development.
 
-Running the Project
-Install dependencies
-npm install
-Set environment variables
-cp .env.example .env
-Start database (Docker)
-docker-compose -f docker-compose.dev.yml up -d
-Run migrations
-npm run prisma:migrate
-Start server
-npm run dev
-Server runs at: http://localhost:3000
+Linkki sivuun: https://wellspring-ws.netlify.app
 
-UX & Course Alignment
-Designed to support User-Centered Design
-Backend enables usability testing and iteration
-Features map directly to user stories
-Supports agile, sprint-based development
-Privacy-first and calm UX by design
+Testi käyttäjän tunnukset:
+admin@user.com
+Salasana: 123456789
+
+
+Linkki Api-dokumentaatioon:
+
+Wireframe:
+https://park-rabid-40787467.figma.site
+
+
+Tietokannan kuvaus:
+PostgreSQL
+Prisma ORM
+
+Modelit
+-User
+-Group
+-Membership
+-Post
+-Comment
+-Event
+-EventParticipant
+-RefreshToken
+-AuditLog
+
+Relaatiot:
+Käyttäjä voi kuulua useaan ryhmään
+Ryhmällä on useita käyttäjiä
+Julkaisulla voi olla kommentteja
+Tapahtumat liittyvät ryhmiin ja käyttäjiin
+
+Toiminnallisuudet:
+Käyttäjä
+-Rekisteröityminen
+-Sisäänkirjautuminen 
+-Uloskirjautuminen
+-Profiilin-muokkaus(Nimi, About me ja Kuva)
+
+Ryhmä
+-Ryhmän luominen
+-Ryhmään liittyminen
+-Julkaisun tekeminen
+-Ryhmä-chatti
+
+Julkaisut
+-Julkaisun luonti
+-Kommentointi
+-Tykkäys
+
+
+Bugit/Ongelmat:
+*Kommenttien määrä näkyy väärin, vaikka kommentti olisi poistettu.
+*Ryhmän liittymisen jälkeen sivun päivitys voi perua jäsenyyden ryhmäsivulla, mutta chatti jää näkyviin.
+*Profiili-sivun tilastoista osa ei päivity oikein.
+*Recent activity ei näytä kaikkia tageja oikein
+*Julkaisujen määrää ei ole rajoitettu syötteissä
+
+
+Käytetyt Materiaalit (Nasteho):
+Community-sivu/ShareModal
+Reactin emoji-picker-react kirjasto
+Reactin timeago kirjasto
+https://uibakery.io/crud-operations/react
+https://choubey.gitbook.io/react-coding-puzzles/39-comment-section-with-nested-replies
+https://www.youtube.com/watch?v=tp7KLHA9ci8&t=1946s
+
+Protectedroutes: https://github.com/ilkkamtk/hybridisovellukset/blob/main/Week3/context.md
+
+Profiili:
+https://www.youtube.com/watch?v=pWd6Enu2Pjs
+https://www.youtube.com/watch?v=Frtvnb4gaHs
+
+Login/Register:
+https://github.com/ilkkamtk/hybridisovellukset/blob/main/Week3/forms.md
+https://www.youtube.com/watch?v=F53MPHqOmYI&t=944s
+
+
+Testaus materiaalit:
+https://michaelrevans.me/blog/creating-a-modal-in-react
+https://medium.com/@entekumejeffrey/part-6-testing-asynchronous-code-and-api-calls-with-jest-and-react-testing-library-5608dc97cf5a
+https://medium.com/@entekumejeffrey/
+part-8-testing-forms-and-user-inputs-in-react-with-jest-a879fa799bbc
+
+Ai:n käyttö:
+Delete näppäin dropdown
+Container tyylitysten korjaus
+public/group feed reititysten korjaus
+tykkäyksien optimistinen ui
+dynaaminen endpoint valinta
+debuggaus
+
+Testaukset:
+**Login, rekisteri ja Community-sivujen vierestä
+---------------------------------------------------------------
