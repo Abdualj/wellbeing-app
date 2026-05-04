@@ -287,7 +287,7 @@ export const debugAPI = {
 export const messagesAPI = {
   // Send a message to a group
   send: async (groupId, content) => {
-    const response = await fetch(`${API_BASE_URL}/messages/groups/${groupId}/messages`, {
+    const response = await fetch(`${API_BASE_URL}/api/v1/messages/groups/${groupId}/messages`, {
       method: 'POST',
       headers: getAuthHeaders(),
       body: JSON.stringify({ content }),
@@ -303,7 +303,7 @@ export const messagesAPI = {
     if (params.before) queryParams.append('before', params.before);
     
     const response = await fetch(
-      `${API_BASE_URL}/messages/groups/${groupId}/messages?${queryParams}`,
+      `${API_BASE_URL}/api/v1/messages/groups/${groupId}/messages?${queryParams}`,
       {
         method: 'GET',
         headers: getAuthHeaders(),
@@ -315,7 +315,7 @@ export const messagesAPI = {
 
   // Edit a message
   edit: async (messageId, content) => {
-    const response = await fetch(`${API_BASE_URL}/messages/messages/${messageId}`, {
+    const response = await fetch(`${API_BASE_URL}/api/v1/messages/messages/${messageId}`, {
       method: 'PUT',
       headers: getAuthHeaders(),
       body: JSON.stringify({ content }),
@@ -326,7 +326,7 @@ export const messagesAPI = {
 
   // Delete a message
   delete: async (messageId) => {
-    const response = await fetch(`${API_BASE_URL}/messages/messages/${messageId}`, {
+    const response = await fetch(`${API_BASE_URL}/api/v1/messages/messages/${messageId}`, {
       method: 'DELETE',
       headers: getAuthHeaders(),
     });
@@ -336,7 +336,7 @@ export const messagesAPI = {
 
   // Mark message as read
   markAsRead: async (messageId) => {
-    const response = await fetch(`${API_BASE_URL}/messages/messages/${messageId}/read`, {
+    const response = await fetch(`${API_BASE_URL}/api/v1/messages/messages/${messageId}/read`, {
       method: 'POST',
       headers: getAuthHeaders(),
     });
@@ -346,7 +346,7 @@ export const messagesAPI = {
 
   // Mark all messages in a group as read
   markAllAsRead: async (groupId) => {
-    const response = await fetch(`${API_BASE_URL}/messages/groups/${groupId}/mark-all-read`, {
+    const response = await fetch(`${API_BASE_URL}/api/v1/messages/groups/${groupId}/mark-all-read`, {
       method: 'POST',
       headers: getAuthHeaders(),
     });
@@ -356,7 +356,7 @@ export const messagesAPI = {
 
   // Get unread count for a group
   getUnreadCount: async (groupId) => {
-    const response = await fetch(`${API_BASE_URL}/messages/groups/${groupId}/unread-count`, {
+    const response = await fetch(`${API_BASE_URL}/api/v1/messages/groups/${groupId}/unread-count`, {
       method: 'GET',
       headers: getAuthHeaders(),
     });
@@ -366,7 +366,7 @@ export const messagesAPI = {
 
   // Get unread counts for all groups
   getUnreadCounts: async () => {
-    const response = await fetch(`${API_BASE_URL}/messages/unread-counts`, {
+    const response = await fetch(`${API_BASE_URL}/api/v1/messages/unread-counts`, {
       method: 'GET',
       headers: getAuthHeaders(),
     });
