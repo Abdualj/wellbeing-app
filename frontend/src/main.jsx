@@ -13,7 +13,7 @@ import LoadingScreen from './components/LoadingScreen'
 import Toast from './components/Toast'
 import GlobalNotifications from './components/GlobalNotifications'
 import PWAInstallPrompt from './components/PWAInstallPrompt'
-import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom'
+import { BrowserRouter, Routes, Route, useLocation, Navigate } from 'react-router-dom'
 import { AppProvider, useApp } from './context/AppContext'
 import ProtectedRoutes from './components/ProtectedRoutes';
 
@@ -46,6 +46,7 @@ const AppWrapper = () => {
       <PWAInstallPrompt />
       <Header />
       <Routes>
+        <Route path="/" element={<Navigate to="/community" replace />} />
         <Route path="/community" element={<Community />} />
         <Route path="/login" element={<Login />} />
         <Route path="/profile" element={<ProtectedRoutes><Profile /></ProtectedRoutes>} />

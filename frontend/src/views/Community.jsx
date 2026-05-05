@@ -325,6 +325,38 @@ const Community = () => {
             <div className="text-center py-12">
               <p className="text-gray-400">Loading posts...</p>
             </div>
+          ) : !user ? (
+            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8 sm:p-12 text-center">
+              <div className="max-w-md mx-auto">
+                <div className="w-16 h-16 sm:w-20 sm:h-20 bg-sage-100 rounded-full flex items-center justify-center mx-auto mb-4 sm:mb-6">
+                  <svg className="w-8 h-8 sm:w-10 sm:h-10 text-sage-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                  </svg>
+                </div>
+                <h2 className="text-xl sm:text-2xl font-bold text-sage-900 mb-2 sm:mb-3">
+                  Welcome to WellSpring Community
+                </h2>
+                <p className="text-sm sm:text-base text-gray-600 mb-6 sm:mb-8 leading-relaxed">
+                  {activeTab === 'public' 
+                    ? 'Join our community to see public posts, share your wellness journey, and connect with others.'
+                    : 'Log in to see posts from your groups and engage with your community members.'}
+                </p>
+                <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center">
+                  <a 
+                    href="/login" 
+                    className="px-6 py-3 bg-sage-700 text-white rounded-lg font-medium hover:bg-sage-800 transition active:scale-95 text-sm sm:text-base"
+                  >
+                    Log In
+                  </a>
+                  <a 
+                    href="/register" 
+                    className="px-6 py-3 border-2 border-sage-700 text-sage-700 rounded-lg font-medium hover:bg-sage-50 transition active:scale-95 text-sm sm:text-base"
+                  >
+                    Create Account
+                  </a>
+                </div>
+              </div>
+            </div>
           ) : posts.length === 0 ? (
             <div className="text-center py-12">
               <p className="text-gray-400">

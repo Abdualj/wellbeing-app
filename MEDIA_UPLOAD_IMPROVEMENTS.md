@@ -22,6 +22,7 @@ Created a smart compression system that automatically optimizes images before up
 - **No quality loss visible to users**
 
 **Example**:
+
 - Original: 8MB photo from phone → Compressed: 1.5MB
 - Original: 12MB screenshot → Compressed: 2.3MB
 
@@ -30,15 +31,16 @@ Created a smart compression system that automatically optimizes images before up
 Increased file size limits significantly:
 
 | File Type | Old Limit | New Limit | Improvement |
-|-----------|-----------|-----------|-------------|
-| Images    | 5MB       | 50MB*     | 10x larger  |
+| --------- | --------- | --------- | ----------- |
+| Images    | 5MB       | 50MB\*    | 10x larger  |
 | Videos    | 10MB      | 50MB      | 5x larger   |
 
-*After compression, images are typically much smaller
+\*After compression, images are typically much smaller
 
 ### 3. **Video Validation** 🎬
 
 Added smart video checks:
+
 - Maximum duration: 2 minutes (120 seconds)
 - Maximum size: 50MB
 - Shows helpful error messages
@@ -47,15 +49,18 @@ Added smart video checks:
 ### 4. **Better User Experience** ✨
 
 #### Upload Progress Indicators
+
 - "Compressing image..." message with spinner
 - "Validating video..." message with spinner
 - Loading state on Share button while uploading
 
 #### Helpful Error Messages
+
 - Instead of: "Unexpected error"
 - Now shows: "Video file is too large (67.3MB). Maximum size is 50MB. Please use a shorter or lower quality video."
 
 #### Console Logging
+
 - Shows compression results: "Image compressed by 73%"
 - Shows file sizes: "Original: 8.5MB → Compressed: 2.1MB"
 - Helps with debugging
@@ -65,6 +70,7 @@ Added smart video checks:
 ## 📁 Files Created/Modified
 
 ### New Files
+
 1. **`frontend/src/utils/mediaCompression.js`**
    - `compressImage()` - Compresses images to optimal size
    - `validateVideo()` - Checks video size and duration
@@ -73,6 +79,7 @@ Added smart video checks:
    - `getVideoDuration()` - Checks video length
 
 ### Modified Files
+
 2. **`frontend/src/components/Community/ShareModal.jsx`**
    - Imported compression utilities
    - Added upload progress state
@@ -120,12 +127,14 @@ Added smart video checks:
 ## 🚀 Performance Benefits
 
 ### Before Compression
+
 - User uploads 8MB photo
 - Base64 encoding increases to ~11MB
 - Slow upload (10-30 seconds)
 - Large database storage
 
 ### After Compression
+
 - Image compressed to 1.5MB automatically
 - Base64 encoding increases to ~2MB
 - Fast upload (2-5 seconds)
@@ -136,27 +145,39 @@ Added smart video checks:
 ## 📊 Usage Examples
 
 ### Small Image (< 1MB)
+
 ✅ Compressed slightly, uploaded quickly
+
 - Original: 800KB → Compressed: 650KB
 
 ### Medium Image (2-5MB)
+
 ✅ Compressed significantly, good quality maintained
+
 - Original: 4.2MB → Compressed: 1.1MB (74% reduction)
 
 ### Large Image (> 10MB)
+
 ✅ Compressed dramatically, still looks great
+
 - Original: 15MB → Compressed: 2.8MB (81% reduction)
 
 ### Short Video (< 30s, < 20MB)
+
 ✅ Uploaded directly, no issues
+
 - Size: 12MB, Duration: 25s → Uploaded as-is
 
 ### Long Video (> 2 minutes)
+
 ❌ Rejected with helpful message
+
 - "Video is too long (156s). Maximum duration is 120s."
 
 ### Large Video (> 50MB)
+
 ❌ Rejected with helpful message
+
 - "Video file is too large (67.3MB). Maximum size is 50MB."
 
 ---
@@ -166,11 +187,13 @@ Added smart video checks:
 ### Upload Progress Messages
 
 1. **When selecting image**:
+
    ```
    [Spinner icon] Compressing image...
    ```
 
 2. **When selecting video**:
+
    ```
    [Spinner icon] Validating video...
    ```
@@ -181,11 +204,13 @@ Added smart video checks:
    ```
 
 ### Success Feedback
+
 - Image preview appears smoothly
 - Console shows compression savings
 - No annoying popups for successful uploads
 
 ### Error Feedback
+
 - Clear error messages in alert
 - File input resets on error
 - Progress message disappears
@@ -211,6 +236,7 @@ Added smart video checks:
 ## 🔍 Browser Console Output Examples
 
 ### Successful Image Upload
+
 ```
 Image compressed: 8.50MB → 2.13MB
 Image compressed by 75%
@@ -220,6 +246,7 @@ Post created successfully: {...}
 ```
 
 ### Successful Video Upload
+
 ```
 Video size: 18.3MB
 Converting video to base64...
@@ -228,8 +255,9 @@ Post created successfully: {...}
 ```
 
 ### Failed Upload (Too Large)
+
 ```
-Video validation error: Video file is too large (67.34MB). 
+Video validation error: Video file is too large (67.34MB).
 Maximum size is 50MB. Please use a shorter or lower quality video.
 ```
 
@@ -238,6 +266,7 @@ Maximum size is 50MB. Please use a shorter or lower quality video.
 ## 💡 Future Improvements
 
 ### Potential Enhancements
+
 1. **Cloud Storage Integration**
    - Upload to AWS S3 or Cloudinary
    - Store URLs instead of base64
@@ -289,11 +318,13 @@ The compression is especially beneficial for mobile users:
 ## 📈 Metrics
 
 ### Storage Savings
+
 - Average image size reduction: **75%**
 - Database growth rate: **80% slower**
 - Upload bandwidth: **75% reduction**
 
 ### User Experience
+
 - Upload success rate: **95%** → **99%**
 - Error rate: **5%** → **1%**
 - Average upload time: **15s** → **3s**
@@ -303,16 +334,19 @@ The compression is especially beneficial for mobile users:
 ## 🎓 Technical Notes
 
 ### Canvas API
+
 - Supported in all modern browsers
 - Hardware accelerated
 - No external dependencies
 
 ### FileReader API
+
 - Native browser API
 - Async/Promise-based
 - Reliable across platforms
 
 ### Base64 Encoding
+
 - Standard format
 - Works with existing backend
 - No migration needed
@@ -365,4 +399,4 @@ Users can now share their wellness journey with high-quality photos and videos w
 
 ---
 
-*Last Updated: May 3, 2026*
+_Last Updated: May 3, 2026_
